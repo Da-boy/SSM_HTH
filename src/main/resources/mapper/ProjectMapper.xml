@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.ProjectDao">
+
+    <insert id="addProject" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO project
+            (project_name, manager_id, project_desc, committee_id, start_date, end_date, create_staff_id)
+        VALUES
+            (#{projectName}, #{managerId}, #{projectDesc}, #{committeeId}, #{startDate}, #{endDate}, #{loginUserId})
+    </insert>
+
+    <select id="countProject" resultType="Integer">
+        SELECT count(0)
+        FROM project w
+    </select>
+
+    <select id="listProject" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.project_id                           project_id,
+            w.project_name                         project_name,
+            w.project_desc                         project_desc,
+            w.manager_id                           manager_id,
+            w.committee_id                         committee_id,
+            date_format(w.start_date, '%Y-%m-%d %T')  start_date,
+            date_format(w.end_date, '%Y-%m-%d %T')    end_date,
+            date_format(w.create_time, '%Y-%m-%d %T') create_time,
+            create_staff_id                           create_staff_id
+        FROM project w
+        ORDER BY w.project_id
+        ASC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+
+    <resultMap id="ProjectMapper" type="com.heeexy.example.util.model.One2Many">
+        <id column="projectId" property="projectId"/>
+        <result column="projectName" property="projectName"/>
+        <result column="projectDesc" property="projectDesc"/>
+        <result column="startDate" property="startDate"/>
+        <result column="endDate" property="endDate"/>
+        <result column="committeeId" property="committeeId"/>
+        <result column="committeeName" property="committeeName"/>
+        <collection property="personList" ofType="com.alibaba.fastjson.JSONObject">
+            <id column="userId" property="userId"/>
+            <result column="username" property="username"/>
+            <result column="certificateId" property="certificateId"/>
+            <result column="certificateNumber" property="certificateNumber"/>
+            <result column="proPositionName" property="proPositionName"/>
+        </collection>
+    </resultMap>
+    <select id="getProjectListById" resultMap="ProjectMapper">
+        SELECT
+          proj.project_id   projectId,
+          proj.project_name   projectName,
+          proj.project_desc   projectDesc,
+          DATE_FORMAT(proj.start_date, '%Y.%m.%d %T') startDate,
+          DATE_FORMAT(proj.end_date, '%Y.%m.%d %T') endDate,
+          ct.committee_id committeeId,
+          ct.committee_name committeeName,
+          u.id    userId,
+          u.username    username,
+          u.certificate_id certificateId,
+          u.certificate_number certificateNumber,
+          pp.pro_position_name proPositionName
+        FROM
+        project proj
+        LEFT JOIN project_staff ps ON ps.project_id = proj.project_id
+        LEFT JOIN sys_user u ON u.id = ps.staff_id
+        LEFT JOIN committee ct ON ct.committee_id = proj.committee_id
+        LEFT JOIN pro_staff_postion psp ON psp.project_id = proj.project_id and psp.staff_id = ps.staff_id
+        LEFT JOIN pro_position pp ON pp.pro_position_id = psp.pro_position_id
+        WHERE proj.project_id = #{projectId}
+    </select>
+
+
+    <select id="getProjectByName" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM project w
+        WHERE w.project_name = #{projectName}
+    </select>
+
+    <!-- 排序+搜索 -->
+    <select id="countProjectBySearch" resultType="Integer">
+        SELECT count(0)
+        FROM project w
+        <if test="value!= ''">
+            WHERE w.project_name like CONCAT('%', #{value} ,'%')
+            or w.project_desc like CONCAT('%', #{value} ,'%')
+        </if>
+    </select>
+    <select id="listProjectBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM project w
+        <if test="value!= ''">
+            WHERE w.project_name like CONCAT('%', #{value} ,'%')
+            or w.project_desc like CONCAT('%', #{value} ,'%')
+        </if>
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise> project_id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="getProjectMemberByID" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT DISTINCT
+           w.project_id           projectId,
+           w.project_name         projectName,
+           u.id                   userId,
+           u.username             userName,
+           depa.department_id     deparmentId,
+           depa.department_name   deparmentName,
+           posi.position_id       positionId,
+           posi.position_name     positionName,
+           pp.pro_position_id     proPositionId,
+           pp.pro_position_name   proPositionName
+        FROM project w
+            LEFT JOIN project_staff ps ON ps.project_id = w.project_id
+            LEFT JOIN sys_user u ON u.id = ps.staff_id
+            LEFT JOIN user_department ud ON ud.staff_id = u.id
+            LEFT JOIN department depa ON depa.department_id = ud.department_id
+            LEFT JOIN user_position up ON up.staff_id = u.id
+            LEFT JOIN position posi ON posi.position_id = up.position_id
+            LEFT JOIN pro_staff_postion psp ON psp.project_id = w.project_id AND psp.staff_id = ps.staff_id
+            LEFT JOIN pro_position pp ON pp.pro_position_id = psp.pro_position_id
+
+        WHERE
+            w.project_id = #{projectId}
+        ORDER BY u.id asc
+    </select>
+
+    <select id="getAllProjectPositions" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM pro_position w
+        ORDER BY w.pro_position_id asc
+    </select>
+
+    <!-- 删除项目成员 -->
+    <delete id="deleteProjectMember" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE
+        FROM project_staff
+        WHERE project_id = #{projectId} and staff_id = #{userId}
+    </delete>
+
+    <!-- 删除项目成员同时，删除项目成员的项目岗位 -->
+    <delete id="deleteProjectStaffPosition" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE
+        FROM pro_staff_postion
+        WHERE project_id = #{projectId} and staff_id = #{userId}
+    </delete>
+
+    <!-- 添加项目成员 -->
+    <insert id="addProjectMember" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO project_staff
+            (project_id, staff_id)
+        VALUES
+            (#{projectId}, #{userId})
+    </insert>
+
+    <!-- 添加项目成员同时，添加项目成员的项目岗位 -->
+    <insert id="addProjectStaffPosition" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO pro_staff_postion
+            (staff_id, project_id, pro_position_id)
+        VALUES
+            (#{userId}, #{projectId}, #{projectPositionId})
+    </insert>
+
+    <insert id="addProjectPosition" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO pro_position
+            (pro_position_name, pro_position_desp)
+        VALUES
+            (#{projectPositionName}, #{projectPositionDesp})
+    </insert>
+
+    <select id="getProjectPositionId" parameterType="com.alibaba.fastjson.JSONObject" resultType="Integer">
+        SELECT pro_position_id
+        FROM pro_position w
+        WHERE w.pro_position_name = #{projectPositionName}
+    </select>
+
+    <!-- TODO排序用 -->
+    <select id="listProjectByContentHaveSearchAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM project w
+        WHERE w.project_name like CONCAT('%', #{value} ,'%') or w.project_desc like CONCAT('%', #{value} ,'%')
+        ORDER BY w.project_id asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <!-- TODO排序用 -->
+    <select id="listProjectByContentHaveSearchDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM project w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.content desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+
+    <!-- TODO排序用 -->
+    <select id="listProjectByOrderCreateTimeHaveSearchAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM project w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.create_time asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <!-- TODO排序用 -->
+    <select id="listProjectByOrderCreateTimeHaveSearchDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM project w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.create_time descupdateProject
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <!-- TODO排序用 -->
+    <select id="listProjectByOrderAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM project w
+        WHERE w.delete_status = '1'
+        ORDER BY w.content asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <!-- TODO排序用 -->
+    <select id="listProjectByContentDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM project w
+        WHERE w.delete_status = '1'
+        ORDER BY w.content desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <!-- TODO排序用 -->
+    <select id="listProjectByOrderCreateTimeAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM project w
+        WHERE w.delete_status = '1'
+        ORDER BY w.create_time asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <!-- TODO排序用 -->
+    <select id="listProjectByOrderCreateTimeDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM project w
+        WHERE w.delete_status = '1'
+        ORDER BY w.create_time desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+
+
+    <update id="updateProject" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE project
+        SET
+            project_name = #{projectName}, manager_id = #{managerId}, project_desc = #{projectDesc},committee_id = #{committeeId},start_date = #{startDate}, end_date = #{endDate}, create_staff_id = #{loginUserId}
+        WHERE project_id = #{projectId}
+    </update>
+    <!--
+    <update id="deleteProject" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE project
+        SET
+            content = #{content},
+            delete_status = #{deleteStatus}
+        WHERE id = #{id}
+    </update>
+    -->
+    <delete id="deleteProject" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE
+        FROM project
+        WHERE project_id = #{project_id}
+    </delete>
+
+</mapper>

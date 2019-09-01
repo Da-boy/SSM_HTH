@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.PersonnelDao">
+
+
+
+
+
+    <!--<insert id="addPersonnel" useGeneratedKeys="true" keyProperty="userId">-->
+        <!--INSERT INTO sys_user-->
+        <!--(username, password, nickname, role_id ,degree_id,gender,nation,major,native,graduated_from,staff_name_en,email,emergency_people,nationality,certificate_number,phone,emergency_phone,certificate_id,age,marital_status,staff_state) VALUES-->
+            <!--(#{username}, #{password}, #{nickname}, #{roleId} ,#{degreeId},#{gender},#{nation},#{major},#{native}, #{graduated_from},#{staffNameEn},#{email},#{emergencyPeople},#{nationality},#{certificateNumber},#{phone},#{emergencyPhone},#{certificateId},#{age},#{marital_status},#{staff_state})-->
+    <!--</insert>-->
+    <insert id="addPersonnel" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO user_department
+            (staff_id , department_id)
+        VALUES
+            (#{userId},#{departmentName})
+    </insert>
+
+    <update id="updatePersonnel" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE user_department ud
+        SET
+             ud.department_id = #{departmentName},
+        WHERE ud.staff_id = #{userId}
+    </update>
+
+
+
+    <delete id="delDeptById" parameterType="com.alibaba.fastjson.JSONObject">
+        delete from user_department where staff_id = #{userId} and department_id = #{deptId}
+    </delete>
+
+
+    <insert id="addDept" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO user_department
+            (staff_id , department_id )
+        VALUES
+            (#{userId},#{deptId})
+    </insert>
+
+
+</mapper>

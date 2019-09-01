@@ -1,0 +1,1594 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.OrderDao">
+
+    <insert id="addOligo" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO orders
+            (client_id, mord_id, create_time, delivery_time, order_status, notification_of_delivery, invoice_title, order_price, order_type, remark, sales_manager_id,form_of_invoice,advance_customer_name,order_id,catalog_id, gene_name, sc_item_id, sense_53, antisense_53, synthetic_spec, div_tubes_number, chemical_modification, flu_labeling, special_modi, item_numbers, item_unit, special_instructions, courier_scervices_company, imported_staff, imported_time, is_import)
+        VALUES
+            (#{client_id}, #{mord_id}, #{create_time}, #{delivery_time}, #{order_status}, #{notification_of_delivery}, #{invoice_title}, #{order_price}, #{order_type}, #{remark}, #{sales_manager_id},#{form_of_invoice},#{advance_customer_name},#{order_id},#{catalog_id},#{gene_name},#{sc_item_id},#{sense_53},#{antisense_53},#{synthetic_spec},#{div_tubes_number},#{chemical_modification},#{flu_labeling},#{special_modi}, #{item_numbers},#{item_unit},#{special_instructions}, #{courier_scervices_company}, #{imported_staff}, #{imported_time}, #{is_import})
+    </insert>
+    <insert id="addKitProbe" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO orders
+            (client_id, mord_id, create_time, delivery_time, order_status, notification_of_delivery, invoice_title, order_price, order_type, remark, sales_manager_id,form_of_invoice,advance_customer_name,order_id,catalog_id, gene_name, sc_item_id, product_name, gene_name_type, specifications, gene_type, item_numbers, item_unit, special_instructions, courier_scervices_company, imported_staff, imported_time, is_import)
+        VALUES
+            (#{client_id}, #{mord_id}, #{create_time}, #{delivery_time}, #{order_status}, #{notification_of_delivery}, #{invoice_title}, #{order_price}, #{order_type}, #{remark}, #{sales_manager_id},#{form_of_invoice},#{advance_customer_name},#{order_id},#{catalog_id},#{gene_name}, #{sc_item_id},#{product_name},#{gene_name_type},#{specifications}, #{gene_type}, #{item_numbers},#{item_unit}, #{special_instructions}, #{courier_scervices_company}, #{imported_staff}, #{imported_time}, #{is_import})
+    </insert>
+    <insert id="addCarrier" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO orders
+            (client_id, mord_id, create_time, delivery_time, order_status, notification_of_delivery, invoice_title, order_price, order_type, remark, sales_manager_id,form_of_invoice,advance_customer_name,order_id,catalog_id, carrier_type, sc_item_id, product_name, gene_name_type, sequence_53, item_numbers, item_unit, special_instructions, courier_scervices_company, imported_staff, imported_time, is_import)
+        VALUES
+            (#{client_id}, #{mord_id}, #{create_time}, #{delivery_time}, #{order_status}, #{notification_of_delivery}, #{invoice_title}, #{order_price}, #{order_type}, #{remark}, #{sales_manager_id},#{form_of_invoice},#{advance_customer_name},#{order_id},#{catalog_id},#{carrier_type}, #{sc_item_id},#{product_name},#{gene_name_type},#{sequence_53}, #{item_numbers},#{item_unit}, #{special_instructions}, #{courier_scervices_company}, #{imported_staff}, #{imported_time}, #{is_import})
+    </insert>
+    <insert id="addDNAProbe" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO orders
+            (client_id, mord_id, create_time, delivery_time, order_status, notification_of_delivery, invoice_title, order_price, order_type, remark, sales_manager_id,form_of_invoice,advance_customer_name,order_id,catalog_id, product_type, sc_item_id, gene_name, dna_sequ_53, base_number, synthetic_spec, div_tubes_number, modifi_5, modifi_3, purification_method, gene_name_type, item_numbers, item_unit, special_instructions, courier_scervices_company, imported_staff, imported_time, is_import)
+        VALUES
+            (#{client_id}, #{mord_id}, #{create_time}, #{delivery_time}, #{order_status}, #{notification_of_delivery}, #{invoice_title}, #{order_price}, #{order_type}, #{remark}, #{sales_manager_id},#{form_of_invoice},#{advance_customer_name},#{order_id},#{catalog_id},#{product_type}, #{sc_item_id},#{gene_name},#{dna_sequ_53},#{base_number}, #{synthetic_spec}, #{div_tubes_number},#{modifi_5},#{modifi_3},#{purification_method},#{gene_name_type}, #{item_numbers},#{item_unit},#{special_instructions}, #{courier_scervices_company}, #{imported_staff}, #{imported_time}, #{is_import})
+    </insert>
+    <insert id="addFISH" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO orders
+            (client_id, mord_id, create_time, delivery_time, order_status, notification_of_delivery, invoice_title, order_price, order_type, remark, sales_manager_id,form_of_invoice,advance_customer_name,order_id,catalog_id, sample_type, sc_item_id, product_name, gene_name_type, probe_sequence_53, numbers, company, modifi_5, modifi_3, purification_method, item_numbers, item_unit, special_instructions, courier_scervices_company, imported_staff, imported_time, is_import)
+        VALUES
+            (#{client_id}, #{mord_id}, #{create_time}, #{delivery_time}, #{order_status}, #{notification_of_delivery}, #{invoice_title}, #{order_price}, #{order_type}, #{remark}, #{sales_manager_id},#{form_of_invoice},#{advance_customer_name},#{order_id},#{catalog_id},#{sample_type},#{sc_item_id},#{product_name}, #{gene_name_type}, #{probe_sequence_53},#{numbers}, #{company}, #{modifi_5},#{modifi_3},#{purification_method}, #{item_numbers},#{item_unit},#{special_instructions}, #{courier_scervices_company}, #{imported_staff}, #{imported_time}, #{is_import})
+    </insert>
+    <insert id="addVirus" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO orders
+            (client_id, mord_id, create_time, delivery_time, order_status, notification_of_delivery, invoice_title, order_price, order_type, remark, sales_manager_id,form_of_invoice,advance_customer_name,order_id, viruses_type, carrier_type, sequence_53, sc_item_id, gene_name_type, order_quantity, div_tubes_number, titer_requirement, item_numbers, item_unit, special_instructions, courier_scervices_company, imported_staff, imported_time, is_import)
+        VALUES
+            (#{client_id}, #{mord_id}, #{create_time}, #{delivery_time}, #{order_status}, #{notification_of_delivery}, #{invoice_title}, #{order_price}, #{order_type}, #{remark}, #{sales_manager_id},#{form_of_invoice},#{advance_customer_name},#{order_id},#{viruses_type},#{carrier_type},#{sequence_53}, #{sc_item_id}, #{gene_name_type}, #{order_quantity}, #{div_tubes_number}, #{titer_requirement}, #{item_numbers},#{item_unit}, #{special_instructions}, #{courier_scervices_company}, #{imported_staff}, #{imported_time}, #{is_import})
+    </insert>
+    <insert id="addWholeGene" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO orders
+            (client_id, mord_id, create_time, delivery_time, order_status, notification_of_delivery, invoice_title, order_price, order_type, remark, sales_manager_id,form_of_invoice,advance_customer_name,order_id, gene_length, carrier_type, sc_item_id, sequence_53, gene_name_type, order_quantity, carrier_vector, cloning_site, item_numbers, item_unit, special_instructions, courier_scervices_company, imported_staff, imported_time, is_import)
+        VALUES
+            (#{client_id}, #{mord_id}, #{create_time}, #{delivery_time}, #{order_status}, #{notification_of_delivery}, #{invoice_title}, #{order_price}, #{order_type}, #{remark}, #{sales_manager_id},#{form_of_invoice},#{advance_customer_name},#{order_id},#{gene_length},#{carrier_type}, #{sc_item_id},#{sequence_53}, #{gene_name_type}, #{order_quantity}, #{carrier_vector}, #{cloning_site}, #{item_numbers},#{item_unit}, #{special_instructions}, #{courier_scervices_company}, #{imported_staff}, #{imported_time}, #{is_import})
+    </insert>
+
+    <update id="checkOrder" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+            is_checked_passing = #{radio},
+            checked_mark_info = #{checkReason},
+            order_status = #{order_status}
+        WHERE mord_id = #{mord_id}
+    </update>
+
+    <update id="updateOrderStatus" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+            order_status = #{order_status}
+        WHERE mord_id = #{mord_id}
+    </update>
+
+    <insert id="addClient" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO client
+            (telephone, client_phone, client_email, client_affiliation, manager_name,shipping_address,postal_code,client_name)
+        VALUES
+            (#{telephone}, #{client_phone}, #{client_email}, #{client_affiliation}, #{manager_name},#{shipping_address},#{postal_code},#{client_name})
+    </insert>
+
+    <update id="updateClient" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE client
+        SET
+            telephone = #{telephone},
+            manager_name = #{manager_name},
+            client_affiliation = #{client_affiliation},
+            shipping_address = #{shipping_address},
+            postal_code = #{postal_code}
+        WHERE client_name=#{client_name} and client_phone=#{client_phone} and client_email=#{client_email}
+    </update>
+
+    <update id="updateOligo" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+        client_id = #{client_id},
+        create_time = #{create_time},
+        delivery_time = #{delivery_time},
+        order_status = #{order_status},
+        notification_of_delivery = #{notification_of_delivery},
+        invoice_title = #{invoice_title},
+        order_price = #{order_price},
+        order_type = #{order_type},
+        remark = #{remark},
+        sales_manager_id = #{sales_manager_id},
+        form_of_invoice = #{form_of_invoice},
+        advance_customer_name = #{advance_customer_name},
+        order_id = #{order_id},
+        catalog_id = #{catalog_id},
+        gene_name = #{gene_name},
+        sc_item_id = #{sc_item_id},
+        sense_53 = #{sense_53},
+        antisense_53 = #{antisense_53},
+        synthetic_spec = #{synthetic_spec},
+        div_tubes_number = #{div_tubes_number},
+        chemical_modification = #{chemical_modification},
+        flu_labeling = #{flu_labeling},
+        special_modi = #{special_modi},
+        item_numbers = #{item_numbers},
+        item_unit = #{item_unit},
+        special_instructions = #{special_instructions},
+        courier_scervices_company  = #{courier_scervices_company}
+        WHERE order_id = #{order_id}
+    </update>
+
+    <update id="updateKitProbe" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+        client_id = #{client_id},
+        create_time = #{create_time},
+        delivery_time = #{delivery_time},
+        order_status = #{order_status},
+        notification_of_delivery = #{notification_of_delivery},
+        invoice_title = #{invoice_title},
+        order_price = #{order_price},
+        order_type = #{order_type},
+        remark = #{remark},
+        sales_manager_id = #{sales_manager_id},
+        form_of_invoice = #{form_of_invoice},
+        advance_customer_name = #{advance_customer_name},
+        order_id = #{order_id},
+        catalog_id = #{catalog_id},
+        gene_name = #{gene_name},
+        sc_item_id = #{sc_item_id},
+        product_name = #{product_name},
+        gene_name_type = #{gene_name_type},
+        specifications = #{specifications},
+        gene_type = #{gene_type},
+        item_numbers = #{item_numbers},
+        item_unit = #{item_unit},
+        special_instructions = #{special_instructions},
+        courier_scervices_company  = #{courier_scervices_company}
+
+        WHERE order_id = #{order_id}
+    </update>
+
+    <update id="updateCarrier" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+        client_id = #{client_id},
+        create_time = #{create_time},
+        delivery_time = #{delivery_time},
+        order_status = #{order_status},
+        notification_of_delivery = #{notification_of_delivery},
+        invoice_title = #{invoice_title},
+        order_price = #{order_price},
+        order_type = #{order_type},
+        remark = #{remark},
+        sales_manager_id = #{sales_manager_id},
+        form_of_invoice = #{form_of_invoice},
+        advance_customer_name = #{advance_customer_name},
+        order_id = #{order_id},
+        catalog_id = #{catalog_id},
+        carrier_type = #{carrier_type},
+        sc_item_id = #{sc_item_id},
+        product_name = #{product_name},
+        gene_name_type = #{gene_name_type},
+        sequence_53 = #{sequence_53},
+        item_numbers = #{item_numbers},
+        item_unit = #{item_unit},
+        special_instructions = #{special_instructions},
+        courier_scervices_company  = #{courier_scervices_company}
+        WHERE order_id = #{order_id}
+    </update>
+
+    <update id="updateDNAProbe" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+        client_id = #{client_id},
+        create_time = #{create_time},
+        delivery_time = #{delivery_time},
+        order_status = #{order_status},
+        notification_of_delivery = #{notification_of_delivery},
+        invoice_title = #{invoice_title},
+        order_price = #{order_price},
+        order_type = #{order_type},
+        remark = #{remark},
+        sales_manager_id = #{sales_manager_id},
+        form_of_invoice = #{form_of_invoice},
+        advance_customer_name = #{advance_customer_name},
+        order_id = #{order_id},
+        catalog_id = #{catalog_id},
+        product_type = #{product_type},
+        sc_item_id = #{sc_item_id},
+        gene_name = #{gene_name},
+        dna_sequ_53 = #{dna_sequ_53},
+        base_number = #{base_number},
+        synthetic_spec = #{synthetic_spec},
+        div_tubes_number = #{div_tubes_number},
+        modifi_5 = #{modifi_5},
+        modifi_3 = #{modifi_3},
+        purification_method = #{purification_method},
+        gene_name_type = #{gene_name_type},
+        item_numbers = #{item_numbers},
+        item_unit = #{item_unit},
+        special_instructions = #{special_instructions},
+        courier_scervices_company  = #{courier_scervices_company}
+
+        WHERE order_id = #{order_id}
+    </update>
+
+    <update id="updateFISH" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+        client_id = #{client_id},
+        create_time = #{create_time},
+        delivery_time = #{delivery_time},
+        order_status = #{order_status},
+        notification_of_delivery = #{notification_of_delivery},
+        invoice_title = #{invoice_title},
+        order_price = #{order_price},
+        order_type = #{order_type},
+        remark = #{remark},
+        sales_manager_id = #{sales_manager_id},
+        form_of_invoice = #{form_of_invoice},
+        advance_customer_name = #{advance_customer_name},
+        order_id = #{order_id},
+        catalog_id = #{catalog_id},
+        sample_type = #{sample_type},
+        sc_item_id = #{sc_item_id},
+        product_name = #{product_name},
+        gene_name_type = #{gene_name_type},
+        probe_sequence_53 = #{probe_sequence_53},
+        numbers = #{numbers},
+        company = #{company},
+        modifi_5 = #{modifi_5},
+        modifi_3 = #{modifi_3},
+        purification_method = #{purification_method},
+        item_numbers = #{item_numbers},
+        item_unit = #{item_unit},
+        special_instructions = #{special_instructions},
+        courier_scervices_company  = #{courier_scervices_company}
+
+        WHERE order_id = #{order_id}
+    </update>
+
+    <update id="updateVirus" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+        client_id = #{client_id},
+        create_time = #{create_time},
+        delivery_time = #{delivery_time},
+        order_status = #{order_status},
+        notification_of_delivery = #{notification_of_delivery},
+        invoice_title = #{invoice_title},
+        order_price = #{order_price},
+        order_type = #{order_type},
+        remark = #{remark},
+        sales_manager_id = #{sales_manager_id},
+        form_of_invoice = #{form_of_invoice},
+        advance_customer_name = #{advance_customer_name},
+        order_id = #{order_id},
+
+        viruses_type = #{viruses_type},
+        carrier_type = #{carrier_type},
+        sequence_53 = #{sequence_53},
+        sc_item_id = #{sc_item_id},
+        gene_name_type = #{gene_name_type},
+        order_quantity = #{order_quantity},
+        div_tubes_number = #{div_tubes_number},
+        titer_requirement = #{titer_requirement},
+        item_numbers = #{item_numbers},
+        item_unit = #{item_unit},
+        special_instructions = #{special_instructions},
+        courier_scervices_company  = #{courier_scervices_company}
+
+        WHERE order_id = #{order_id}
+    </update>
+
+    <update id="updateWholeGene" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+        client_id = #{client_id},
+        create_time = #{create_time},
+        delivery_time = #{delivery_time},
+        order_status = #{order_status},
+        notification_of_delivery = #{notification_of_delivery},
+        invoice_title = #{invoice_title},
+        order_price = #{order_price},
+        order_type = #{order_type},
+        remark = #{remark},
+        sales_manager_id = #{sales_manager_id},
+        form_of_invoice = #{form_of_invoice},
+        advance_customer_name = #{advance_customer_name},
+
+        order_id = #{order_id},
+        gene_length = #{gene_length},
+        carrier_type = #{carrier_type},
+        sc_item_id = #{sc_item_id},
+        sequence_53 = #{sequence_53},
+        gene_name_type = #{gene_name_type},
+        order_quantity = #{order_quantity},
+        carrier_vector = #{carrier_vector},
+        cloning_site = #{cloning_site},
+        item_numbers = #{item_numbers},
+        item_unit = #{item_unit},
+        special_instructions = #{special_instructions},
+        courier_scervices_company  = #{courier_scervices_company}
+
+        WHERE order_id = #{order_id}
+    </update>
+
+    <select id="getSalesManagerID" resultType="Integer">
+        SELECT id FROM sys_user where username = #{username}
+    </select>
+
+    <select id="maxMord_Id" resultType="Integer">
+        SELECT max(mord_id) FROM orders
+    </select>
+
+    <select id="countMordByID" resultType="Integer">
+        SELECT count(mord_id) FROM orders WHERE mord_id=#{0}
+    </select>
+
+    <select id="getClientID" resultType="Integer">
+        SELECT client_id FROM client where client_name = #{client_name} and client_phone = #{client_phone} and client_email = #{client_email}
+    </select>
+
+    <insert id="addexwarehouse" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO warehouse_out
+            (exwarehouse_type , exwarehouse_status,saling_son_order_id,storage_put_num_ought,storage_put_num,product_name,unit,goods_id)
+        VALUES
+            (#{type}, #{status}, #{saling_son_order_id}, #{storage_put_num_ought}, #{storage_put_num}, #{product_name} ,#{unit},#{sc_item_id})
+    </insert>
+
+
+    <insert id="addproduct" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO product_order
+            (sales_son_order_id,product_type,product_status , gene_name , synthetic_specification , num_divided_tubes , sense , antisense ,
+            chemical_modification,special_modification,fluorescent_labeling,special_instructions,create_staff_id,order_major_dept_id,sc_item_id,item_numbers,item_unit)
+        VALUES
+            (#{saling_son_order_id}, #{product_type}, #{status}, #{gene_name}, #{specifications}, #{div_tubes_number}
+            , #{sense_53}, #{antisense_53}, #{chemical_modification}, #{special_modi}, #{flu_labeling}, #{special_instructions},#{create_staff_id},#{product_major_dept_id},#{sc_item_id},#{item_numbers},#{item_unit})
+    </insert>
+
+    <!--    销售人员创建设计订单操作-->
+    <update id="updatewarehouseStatus" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+            order_status = #{status}
+        WHERE mord_id = #{mord_id}
+    </update>
+    <insert id="adddesign" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO design_order
+            (sales_mord_id, sales_son_order_id, create_staff_id, design_major_dept)
+        VALUES
+            (#{sales_mord_id}, #{saling_son_order_id}, #{create_staff_id}, #{design_major_dept} )
+    </insert>
+    <update id="updatedesign" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE design_order
+        SET
+            design_staff_id = #{design_staff_id}
+
+        WHERE sales_mord_id = #{sales_mord_id}
+    </update>
+
+    <update id="updatedesigndonetime" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE design_order
+        SET
+            design_done_time = #{design_done_time}
+
+        WHERE sales_mord_id = #{sales_mord_id}
+    </update>
+
+
+    <update id="updateOrderByCheck" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+            mark = #{textarea2},
+            <if test="radio2 == 1">
+                order_status = '审核通过'
+            </if>
+            <if test="radio2 == 2">
+                order_status = '审核不通过'
+            </if>
+        WHERE order_id = #{id}
+    </update>
+
+    <select id="getCompanyByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.company_name = #{company_name}
+    </select>
+
+    <select id="getTelephoneByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.telephone = #{telephone}
+    </select>
+
+    <select id="getAddressByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.address = #{address}
+    </select>
+
+    <select id="getRegisterIdByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.register_id = #{register_id}
+    </select>
+
+    <select id="getClient_name_phone" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT client_id, client_name, client_phone, client_email FROM client
+    </select>
+
+    <select id="countOrder" resultType="Integer">
+--         SELECT count(distinct mord_id) FROM orders WHERE order_status != '已终止'
+        SELECT count(mord_id) FROM orders WHERE order_status != '已终止'
+    </select>
+
+    <select id="countMordOrder" resultType="Integer">
+        SELECT count(distinct mord_id) FROM orders WHERE order_status != '已终止'
+    </select>
+
+    <update id="deleteOrder" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+            order_status = '已终止'
+        WHERE mord_id = #{mord_id}
+
+    </update>
+
+    <select id="getDesignOrderList" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            order_id
+        from orders
+        where mord_id = #{mord_id}
+    </select>
+
+    <select id="getSonOrderByfathor" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.mord_id                                       mord_id,
+            w.order_id                                      order_id,
+            w.order_status                                  order_status,
+            w.order_type                                    order_type,
+            s.username                                      username,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')    delivery_time,
+            DATE_FORMAT(w.imported_time, '%Y-%m-%d %T')    imported_time,
+            c.client_name                                   client_name,
+            c.manager_name                                  manager_name,
+            c.client_affiliation                            client_affiliation,
+            c.shipping_address                              shipping_address,
+            w.invoice_title                                 invoice_title,
+            w.form_of_invoice                               form_of_invoice,
+            c.telephone                                     telephone,
+            c.client_phone                                  client_phone,
+            c.client_email                                  client_email,
+            w.notification_of_delivery                      notification_of_delivery,
+            w.order_status                                 orderStatus,
+            w.order_type                                   orderType,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      createTime,
+            DATE_FORMAT(w.pay_time, '%Y-%m-%d %T')          payTime,
+            DATE_FORMAT(w.cancel_time, '%Y-%m-%d %T')          cancelTime,
+            DATE_FORMAT(w.refund_time, '%Y-%m-%d %T')          refundTime,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')          deliveryTime,
+            DATE_FORMAT(w.design_time, '%Y-%m-%d %T')          designTime,
+            DATE_FORMAT(w.production_time, '%Y-%m-%d %T')          productionTime,
+            DATE_FORMAT(w.stock_time, '%Y-%m-%d %T')          stockTime,
+            DATE_FORMAT(w.payed_time, '%Y-%m-%d %T')          payedTime,
+            w.gene_name                                       geneName,
+            w.specifications                                  specifications,
+            w.div_tubes_number                                divTubesNumber,
+            w.sense_53                                        sense_53,
+            w.antisense_53                                    antisense_53,
+            w.chemical_modification                           chemicalModification,
+            w.special_modi                                    specialModi,
+            w.flu_labeling                                    fluLabeling,
+            w.special_instructions                            specialInstructions,
+            w.sc_item_id                                      sc_item_id,
+            w.item_numbers                                   item_numbers,
+            w.item_unit                                       item_unit,
+            w.order_people                                    order_people,
+            w.sales_manager_id                                sales_manager_id
+        FROM orders as w
+        LEFT join client as c on w.client_id=c.client_id
+        LEFT JOIN sys_user as s on w.imported_staff=s.id
+        WHERE w.order_status != '已终止' and w.mord_id = ${mord_id}
+        ORDER BY w.mord_id
+    </select>
+
+
+    <select id="listOrder" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.mord_id                                       mord_id,
+            w.order_id                                      order_id,
+            w.order_status                                  order_status,
+            w.order_type                                    order_type,
+            s.username                                      username,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')    delivery_time,
+            DATE_FORMAT(w.imported_time, '%Y-%m-%d %T')    imported_time,
+            c.client_name                                   client_name,
+            c.manager_name                                  manager_name,
+            c.client_affiliation                            client_affiliation,
+            c.shipping_address                              shipping_address,
+            w.invoice_title                                 invoice_title,
+            w.form_of_invoice                               form_of_invoice,
+            c.telephone                                     telephone,
+            c.client_phone                                  client_phone,
+            c.client_email                                  client_email,
+            w.notification_of_delivery                      notification_of_delivery,
+            w.order_status                                 orderStatus,
+            w.order_type                                   orderType,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      createTime,
+            DATE_FORMAT(w.pay_time, '%Y-%m-%d %T')          payTime,
+            DATE_FORMAT(w.cancel_time, '%Y-%m-%d %T')          cancelTime,
+            DATE_FORMAT(w.refund_time, '%Y-%m-%d %T')          refundTime,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')          deliveryTime,
+            DATE_FORMAT(w.design_time, '%Y-%m-%d %T')          designTime,
+            DATE_FORMAT(w.production_time, '%Y-%m-%d %T')          productionTime,
+            DATE_FORMAT(w.stock_time, '%Y-%m-%d %T')          stockTime,
+            DATE_FORMAT(w.payed_time, '%Y-%m-%d %T')          payedTime,
+            w.gene_name                                       geneName,
+            w.specifications                                  specifications,
+            w.div_tubes_number                                divTubesNumber,
+            w.sense_53                                        sense_53,
+            w.antisense_53                                    antisense_53,
+            w.chemical_modification                           chemicalModification,
+            w.special_modi                                    specialModi,
+            w.flu_labeling                                    fluLabeling,
+            w.special_instructions                            specialInstructions,
+            w.sc_item_id                                      sc_item_id,
+            w.item_numbers                                   item_numbers,
+            w.item_unit                                       item_unit,
+            w.order_people                                    order_people,
+            w.sales_manager_id                                sales_manager_id
+        FROM orders as w
+        LEFT join client as c on w.client_id=c.client_id
+        LEFT JOIN sys_user as s on w.imported_staff=s.id
+        WHERE w.order_status != '已终止'
+        ORDER BY w.mord_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listMordOrder" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.mord_id                                       mord_id,
+            w.order_id                                      order_id,
+            w.order_status                                  order_status,
+            w.order_type                                    order_type,
+            s.username                                      username,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')    delivery_time,
+            DATE_FORMAT(w.imported_time, '%Y-%m-%d %T')    imported_time,
+            c.client_name                                   client_name,
+            c.manager_name                                  manager_name,
+            c.client_affiliation                            client_affiliation,
+            c.shipping_address                              shipping_address,
+            w.invoice_title                                 invoice_title,
+            w.form_of_invoice                               form_of_invoice,
+            c.telephone                                     telephone,
+            c.client_phone                                  client_phone,
+            c.client_email                                  client_email,
+            w.notification_of_delivery                      notification_of_delivery,
+            w.order_status                                 orderStatus,
+            w.order_type                                   orderType,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      createTime,
+            DATE_FORMAT(w.pay_time, '%Y-%m-%d %T')          payTime,
+            DATE_FORMAT(w.cancel_time, '%Y-%m-%d %T')          cancelTime,
+            DATE_FORMAT(w.refund_time, '%Y-%m-%d %T')          refundTime,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')          deliveryTime,
+            DATE_FORMAT(w.design_time, '%Y-%m-%d %T')          designTime,
+            DATE_FORMAT(w.production_time, '%Y-%m-%d %T')          productionTime,
+            DATE_FORMAT(w.stock_time, '%Y-%m-%d %T')          stockTime,
+            DATE_FORMAT(w.payed_time, '%Y-%m-%d %T')          payedTime,
+            w.gene_name                                       geneName,
+            w.specifications                                  specifications,
+            w.div_tubes_number                                divTubesNumber,
+            w.sense_53                                        sense_53,
+            w.antisense_53                                    antisense_53,
+            w.chemical_modification                           chemicalModification,
+            w.special_modi                                    specialModi,
+            w.flu_labeling                                    fluLabeling,
+            w.special_instructions                            specialInstructions,
+            w.sc_item_id                                      sc_item_id,
+            w.item_numbers                                   item_numbers,
+            w.item_unit                                       item_unit,
+            w.order_people                                    order_people,
+            w.sales_manager_id                                sales_manager_id
+
+        FROM orders as w
+        LEFT join client as c on w.client_id = c.client_id
+        LEFT JOIN sys_user as s on w.imported_staff = s.id
+        WHERE w.order_status != '已终止'
+        GROUP BY w.mord_id
+        ORDER BY w.mord_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="countOrderBySearch" resultType="Integer">
+        SELECT count(distinct mord_id)
+        FROM orders as w
+        LEFT JOIN client as c on w.client_id=c.client_id
+        LEFT JOIN sys_user as s on w.imported_staff=s.id
+        WHERE
+            w.order_status != '已终止' AND
+
+            <if test="status!='所有状态'">
+                w.order_status = #{status} AND
+            </if>
+            <if test="dateSelection == 'create_time'">
+                (w.create_time > #{start_time} AND #{end_time} > w.create_time) AND
+            </if>
+            <if test="dateSelection == 'delivery_time'">
+                (w.delivery_time > #{start_time} AND #{end_time} > w.delivery_time) AND
+            </if>
+            <if test="dateSelection == 'imported_time'">
+                (w.imported_time > #{start_time} AND #{end_time} > w.imported_time) AND
+            </if>
+            (w.order_id LIKE binary CONCAT('%', #{value} ,'%')
+            or w.order_status LIKE binary CONCAT('%', #{value} ,'%')
+            or w.create_time LIKE binary CONCAT('%', #{value} ,'%')
+            or s.username LIKE binary CONCAT('%', #{value} ,'%')
+            or w.delivery_time LIKE binary CONCAT('%', #{value} ,'%')
+            or w.order_type LIKE binary CONCAT('%', #{value} ,'%')
+            or w.imported_time LIKE binary CONCAT('%', #{value} ,'%')
+            or c.client_name LIKE binary CONCAT('%', #{value} ,'%')
+            or c.manager_name LIKE binary CONCAT('%', #{value} ,'%')
+            or c.client_affiliation LIKE binary CONCAT('%', #{value} ,'%')
+            or c.shipping_address LIKE binary CONCAT('%', #{value} ,'%')
+            or w.invoice_title LIKE binary CONCAT('%', #{value} ,'%')
+            or w.form_of_invoice LIKE binary CONCAT('%', #{value} ,'%')
+            or c.telephone LIKE binary CONCAT('%', #{value} ,'%')
+            or c.client_phone LIKE binary CONCAT('%', #{value} ,'%')
+            or c.client_email LIKE binary CONCAT('%', #{value} ,'%')
+            or w.notification_of_delivery LIKE binary CONCAT('%', #{value} ,'%'))
+    </select>
+
+    <select id="listOrderBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.mord_id                                       mord_id,
+            w.order_id                                      order_id,
+            w.order_status                                  order_status,
+            w.order_type                                    order_type,
+            s.username                                      username,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')    delivery_time,
+            DATE_FORMAT(w.imported_time, '%Y-%m-%d %T')    imported_time,
+            c.client_name                                   client_name,
+            c.manager_name                                  manager_name,
+            c.client_affiliation                            client_affiliation,
+            c.shipping_address                              shipping_address,
+            w.invoice_title                                 invoice_title,
+            w.form_of_invoice                               form_of_invoice,
+            c.telephone                                     telephone,
+            c.client_phone                                  client_phone,
+            c.client_email                                  client_email,
+            w.notification_of_delivery                      notification_of_delivery,
+            w.order_status                                 orderStatus,
+            w.order_type                                   orderType,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      createTime,
+            DATE_FORMAT(w.pay_time, '%Y-%m-%d %T')          payTime,
+            DATE_FORMAT(w.cancel_time, '%Y-%m-%d %T')          cancelTime,
+            DATE_FORMAT(w.refund_time, '%Y-%m-%d %T')          refundTime,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')          deliveryTime,
+            DATE_FORMAT(w.design_time, '%Y-%m-%d %T')          designTime,
+            DATE_FORMAT(w.production_time, '%Y-%m-%d %T')          productionTime,
+            DATE_FORMAT(w.stock_time, '%Y-%m-%d %T')          stockTime,
+            DATE_FORMAT(w.payed_time, '%Y-%m-%d %T')          payedTime,
+            w.gene_name                                       geneName,
+            w.specifications                                  specifications,
+            w.div_tubes_number                                divTubesNumber,
+            w.sense_53                                        sense_53,
+            w.antisense_53                                    antisense_53,
+            w.chemical_modification                           chemicalModification,
+            w.special_modi                                    specialModi,
+            w.flu_labeling                                    fluLabeling,
+            w.special_instructions                            specialInstructions,
+            w.sc_item_id                                      sc_item_id,
+            w.item_numbers                                   item_numbers,
+            w.item_unit                                       item_unit,
+            w.order_people                                    order_people,
+            w.sales_manager_id                                sales_manager_id
+
+        FROM orders as w
+        LEFT JOIN client as c on w.client_id=c.client_id
+        LEFT JOIN sys_user as s on w.imported_staff=s.id
+        WHERE
+            w.order_status != '已终止' AND
+
+            <if test="status!='所有状态'">
+                w.order_status = #{status} AND
+            </if>
+            <if test="dateSelection == 'create_time'">
+                (w.create_time > #{start_time} AND #{end_time} > w.create_time) AND
+            </if>
+            <if test="dateSelection == 'delivery_time'">
+                (w.delivery_time > #{start_time} AND #{end_time} > w.delivery_time) AND
+            </if>
+            <if test="dateSelection == 'imported_time'">
+                (w.imported_time > #{start_time} AND #{end_time} > w.imported_time) AND
+            </if>
+            (w.order_id LIKE binary CONCAT('%', #{value} ,'%')
+            or w.order_status LIKE binary CONCAT('%', #{value} ,'%')
+            or w.create_time LIKE binary CONCAT('%', #{value} ,'%')
+            or s.username LIKE binary CONCAT('%', #{value} ,'%')
+            or w.delivery_time LIKE binary CONCAT('%', #{value} ,'%')
+            or w.order_type LIKE binary CONCAT('%', #{value} ,'%')
+            or w.imported_time LIKE binary CONCAT('%', #{value} ,'%')
+            or c.client_name LIKE binary CONCAT('%', #{value} ,'%')
+            or c.manager_name LIKE binary CONCAT('%', #{value} ,'%')
+            or c.client_affiliation LIKE binary CONCAT('%', #{value} ,'%')
+            or c.shipping_address LIKE binary CONCAT('%', #{value} ,'%')
+            or w.invoice_title LIKE binary CONCAT('%', #{value} ,'%')
+            or w.form_of_invoice LIKE binary CONCAT('%', #{value} ,'%')
+            or c.telephone LIKE binary CONCAT('%', #{value} ,'%')
+            or c.client_phone LIKE binary CONCAT('%', #{value} ,'%')
+            or c.client_email LIKE binary CONCAT('%', #{value} ,'%')
+            or w.notification_of_delivery LIKE binary CONCAT('%', #{value} ,'%'))
+        GROUP BY w.mord_id
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise>  w.mord_id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listSales" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT id, username FROM sys_user
+    </select>
+
+    <select id="getOrderTypeByID" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT DISTINCT order_type FROM orders where mord_id = #{mord_id}
+    </select>
+
+    <select id="getRowDetailByID" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.order_id                                        order_id,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')         create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')       delivery_time,
+            w.order_status                                    orderStatus,
+            w.order_type                                      order_type,
+
+            w.catalog_id                                      catalog_id,
+            w.gene_name                                       gene_name,
+            w.sense_53                                        sense_53,
+            w.antisense_53                                    antisense_53,
+            w.synthetic_spec                                  synthetic_spec,
+            w.div_tubes_number                                div_tubes_number,
+            w.chemical_modification                           chemical_modification,
+            w.flu_labeling                                    flu_labeling,
+            w.special_modi                                    special_modi,
+            w.special_instructions                            special_instructions,
+
+            w.product_name                                    product_name,
+            w.gene_name_type                                  gene_name_type,
+            w.specifications                                  specifications,
+            w.gene_type                                       gene_type,
+
+            w.carrier_type                                    carrier_type,
+            w.sequence_53                                     sequence_53,
+
+            w.product_type                                    product_type,
+            w.dna_sequ_53                                     dna_sequ_53,
+            w.base_number                                     base_number,
+            w.modifi_5                                        modifi_5,
+            w.modifi_3                                        modifi_3,
+            w.purification_method                             purification_method,
+
+            w.sample_type                                     sample_type,
+            w.probe_sequence_53                               probe_sequence_53,
+            w.numbers                                         numbers,
+            w.company                                         company,
+
+            w.viruses_type                                    viruses_type,
+            w.order_quantity                                  order_quantity,
+            w.titer_requirement                               titer_requirement,
+
+            w.gene_length                                     gene_length,
+            w.carrier_vector                                  carrier_vector,
+            w.cloning_site                                    cloning_site
+
+        FROM orders as w
+        where w.mord_id = #{0}
+    </select>
+
+    <select id="getRNAOligoByID" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.order_id                                        order_id,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')        create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')      delivery_time,
+            w.order_status                                    order_status,
+            c.client_name                                     client_name,
+            c.manager_name                                    manager_name,
+            c.client_affiliation                              client_affiliation,
+            c.shipping_address                                shipping_address,
+            w.invoice_title                                   invoice_title,
+            w.form_of_invoice                                 form_of_invoice,
+            c.telephone                                       telephone,
+            c.client_phone                                    client_phone,
+            c.client_email                                    client_email,
+            c.postal_code                                     postal_code,
+            w.notification_of_delivery                        notification_of_delivery,
+            w.gene_name                                       gene_name,
+            w.sc_item_id                                      sc_item_id,
+            w.div_tubes_number                                div_tubes_number,
+            w.sense_53                                        sense_53,
+            w.antisense_53                                    antisense_53,
+            w.chemical_modification                           chemical_modification,
+            w.special_modi                                    special_modi,
+            w.flu_labeling                                    flu_labeling,
+            w.special_instructions                            special_instructions,
+            w.notification_of_delivery                        notification_of_delivery,
+            w.order_price                                     order_price,
+            w.remark                                          remark,
+            w.advance_customer_name                           advance_customer_name,
+            w.catalog_id                                      catalog_id,
+            w.synthetic_spec                                  synthetic_spec,
+            w.item_numbers                                    item_numbers,
+            w.item_unit                                       item_unit,
+            w.courier_scervices_company                       courier_scervices_company,
+            s.username                                        username,
+            w.sales_manager_id                                sales_manager_id
+
+        FROM orders as w
+        LEFT JOIN client as c on w.client_id=c.client_id
+        LEFT JOIN sys_user as s on w.sales_manager_id = s.id
+        where w.mord_id = #{0}
+    </select>
+
+    <select id="getCarrierByID" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.order_id                                        order_id,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')        create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')      delivery_time,
+            w.order_status                                    order_status,
+            c.client_name                                     client_name,
+            c.manager_name                                    manager_name,
+            c.client_affiliation                              client_affiliation,
+            c.shipping_address                                shipping_address,
+            w.invoice_title                                   invoice_title,
+            w.form_of_invoice                                 form_of_invoice,
+            c.telephone                                       telephone,
+            c.client_phone                                    client_phone,
+            c.client_email                                    client_email,
+            c.postal_code                                     postal_code,
+            w.sales_manager_id                                sales_manager_id,
+            w.notification_of_delivery                        notification_of_delivery,
+            w.carrier_type                                    carrier_type,
+            w.product_name                                    product_name,
+            w.gene_name_type                                  gene_name_type,
+            w.sequence_53                                     sequence_53,
+            w.special_instructions                            special_instructions,
+            w.notification_of_delivery                        notification_of_delivery,
+            w.order_price                                     order_price,
+            w.remark                                          remark,
+            w.advance_customer_name                           advance_customer_name,
+            w.catalog_id                                      catalog_id,
+            w.item_numbers                                    item_numbers,
+            w.item_unit                                       item_unit,
+            w.courier_scervices_company                       courier_scervices_company,
+            s.username                                        username,
+            w.sc_item_id                                      sc_item_id
+
+        FROM orders as w
+        LEFT JOIN client as c on w.client_id=c.client_id
+        LEFT JOIN sys_user as s on w.sales_manager_id = s.id
+        where w.mord_id = #{0}
+    </select>
+
+    <select id="getDNAProbeByID" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.order_id                                        order_id,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')        create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')      delivery_time,
+            w.order_status                                    order_status,
+            c.client_name                                     client_name,
+            c.manager_name                                    manager_name,
+            c.client_affiliation                              client_affiliation,
+            c.shipping_address                                shipping_address,
+            w.invoice_title                                   invoice_title,
+            w.form_of_invoice                                 form_of_invoice,
+            c.telephone                                       telephone,
+            c.client_phone                                    client_phone,
+            c.client_email                                    client_email,
+            c.postal_code                                     postal_code,
+            w.notification_of_delivery                        notification_of_delivery,
+            w.product_type                                    product_type,
+            w.gene_name                                       gene_name,
+            w.dna_sequ_53                                     dna_sequ_53,
+            w.base_number                                     base_number,
+            w.synthetic_spec                                  synthetic_spec,
+            w.div_tubes_number                                div_tubes_number,
+            w.modifi_5                                        modifi_5,
+            w.modifi_3                                        modifi_3,
+            w.purification_method                             purification_method,
+            w.gene_name_type                                  gene_name_type,
+            w.special_instructions                            special_instructions,
+            w.notification_of_delivery                        notification_of_delivery,
+            w.order_price                                     order_price,
+            w.remark                                          remark,
+            w.advance_customer_name                           advance_customer_name,
+            w.catalog_id                                      catalog_id,
+            w.item_numbers                                    item_numbers,
+            w.item_unit                                       item_unit,
+            w.courier_scervices_company                       courier_scervices_company,
+            s.username                                        username,
+            w.sales_manager_id                                sales_manager_id,
+            w.sc_item_id                                      sc_item_id
+
+        FROM orders as w
+        LEFT JOIN client as c on w.client_id=c.client_id
+        LEFT JOIN sys_user as s on w.sales_manager_id = s.id
+        where w.mord_id = #{0}
+    </select>
+
+    <select id="getFISHKitByID" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.order_id                                        order_id,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')        create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')      delivery_time,
+            w.order_status                                    order_status,
+            c.client_name                                     client_name,
+            c.manager_name                                    manager_name,
+            c.client_affiliation                              client_affiliation,
+            c.shipping_address                                shipping_address,
+            w.invoice_title                                   invoice_title,
+            w.form_of_invoice                                 form_of_invoice,
+            c.telephone                                       telephone,
+            c.client_phone                                    client_phone,
+            c.client_email                                    client_email,
+            c.postal_code                                     postal_code,
+            w.notification_of_delivery                        notification_of_delivery,
+
+            w.sample_type                                     sample_type,
+            w.product_name                                    product_name,
+            w.gene_name_type                                  gene_name_type,
+            w.probe_sequence_53                               probe_sequence_53,
+            w.numbers                                         numbers,
+            w.company                                         company,
+            w.modifi_5                                        modifi_5,
+            w.modifi_3                                        modifi_3,
+            w.purification_method                             purification_method,
+            w.special_instructions                            special_instructions,
+            w.sc_item_id                                      sc_item_id,
+            w.notification_of_delivery                        notification_of_delivery,
+            w.order_price                                     order_price,
+            w.remark                                          remark,
+            w.advance_customer_name                           advance_customer_name,
+            w.catalog_id                                      catalog_id,
+            w.item_numbers                                    item_numbers,
+            w.item_unit                                       item_unit,
+            w.courier_scervices_company                       courier_scervices_company,
+            s.username                                        username,
+            w.sales_manager_id                                sales_manager_id
+
+        FROM orders as w
+        LEFT JOIN client as c on w.client_id=c.client_id
+        LEFT JOIN sys_user as s on w.sales_manager_id = s.id
+        where w.mord_id = #{0}
+    </select>
+
+    <select id="getKitProbeByID" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.order_id                                        order_id,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')        create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')      delivery_time,
+            w.order_status                                    order_status,
+            c.client_name                                     client_name,
+            c.manager_name                                    manager_name,
+            c.client_affiliation                              client_affiliation,
+            c.shipping_address                                shipping_address,
+            w.invoice_title                                   invoice_title,
+            w.form_of_invoice                                 form_of_invoice,
+            c.telephone                                       telephone,
+            c.client_phone                                    client_phone,
+            c.client_email                                    client_email,
+            c.postal_code                                     postal_code,
+            w.notification_of_delivery                        notification_of_delivery,
+            w.gene_name                                       gene_name,
+            w.product_name                                    product_name,
+            w.gene_name_type                                  gene_name_type,
+            w.specifications                                  specifications,
+            w.special_instructions                            special_instructions,
+            w.notification_of_delivery                        notification_of_delivery,
+            w.order_price                                     order_price,
+            w.remark                                          remark,
+            w.advance_customer_name                           advance_customer_name,
+            w.catalog_id                                      catalog_id,
+            w.item_numbers                                    item_numbers,
+            w.item_unit                                       item_unit,
+            w.courier_scervices_company                       courier_scervices_company,
+            s.username                                        username,
+            w.sc_item_id                                      sc_item_id,
+            w.sales_manager_id                                sales_manager_id
+
+        FROM orders as w
+        LEFT JOIN client as c on w.client_id=c.client_id
+        LEFT JOIN sys_user as s on w.sales_manager_id = s.id
+        where w.mord_id = #{0}
+    </select>
+
+    <select id="getVirusByID" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.order_id                                        order_id,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')        create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')      delivery_time,
+            w.order_status                                    order_status,
+            c.client_name                                     client_name,
+            c.manager_name                                    manager_name,
+            c.client_affiliation                              client_affiliation,
+            c.shipping_address                                shipping_address,
+            w.invoice_title                                   invoice_title,
+            w.form_of_invoice                                 form_of_invoice,
+            c.telephone                                       telephone,
+            c.client_phone                                    client_phone,
+            c.client_email                                    client_email,
+            c.postal_code                                     postal_code,
+            w.notification_of_delivery                        notification_of_delivery,
+
+            w.carrier_type                                    carrier_type,
+            w.viruses_type                                    viruses_type,
+            w.gene_name_type                                  gene_name_type,
+            w.sequence_53                                     sequence_53,
+            w.special_instructions                            special_instructions,
+            w.order_quantity                                  order_quantity,
+            w.div_tubes_number                                div_tubes_number,
+            w.titer_requirement                               titer_requirement,
+
+            w.notification_of_delivery                        notification_of_delivery,
+            w.order_price                                     order_price,
+            w.remark                                          remark,
+            w.advance_customer_name                           advance_customer_name,
+            w.item_numbers                                    item_numbers,
+            w.item_unit                                       item_unit,
+            w.courier_scervices_company                       courier_scervices_company,
+            s.username                                        username,
+            w.sc_item_id                                      sc_item_id,
+            w.sales_manager_id                                sales_manager_id
+
+        FROM orders as w
+        LEFT JOIN client as c on w.client_id=c.client_id
+        LEFT JOIN sys_user as s on w.sales_manager_id = s.id
+        where w.mord_id = #{0}
+    </select>
+
+    <select id="getWholeGeneByID" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.order_id                                        order_id,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')        create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')      delivery_time,
+            w.order_status                                    order_status,
+            c.client_name                                     client_name,
+            c.manager_name                                    manager_name,
+            c.client_affiliation                              client_affiliation,
+            c.shipping_address                                shipping_address,
+            w.invoice_title                                   invoice_title,
+            w.form_of_invoice                                 form_of_invoice,
+            c.telephone                                       telephone,
+            c.client_phone                                    client_phone,
+            c.client_email                                    client_email,
+            c.postal_code                                     postal_code,
+            w.notification_of_delivery                        notification_of_delivery,
+
+            w.carrier_type                                    carrier_type,
+            w.gene_length                                     gene_length,
+            w.gene_name_type                                  gene_name_type,
+            w.sequence_53                                     sequence_53,
+            w.special_instructions                            special_instructions,
+            w.order_quantity                                  order_quantity,
+            w.carrier_vector                                  carrier_vector,
+            w.cloning_site                                    cloning_site,
+
+            w.notification_of_delivery                        notification_of_delivery,
+            w.order_price                                     order_price,
+            w.remark                                          remark,
+            w.advance_customer_name                           advance_customer_name,
+            w.item_numbers                                    item_numbers,
+            w.item_unit                                       item_unit,
+            w.courier_scervices_company                       courier_scervices_company,
+            s.username                                        username,
+            w.sc_item_id                                      sc_item_id,
+            w.sales_manager_id                                sales_manager_id
+
+            FROM orders as w
+            LEFT JOIN client as c on w.client_id=c.client_id
+            LEFT JOIN sys_user as s on w.sales_manager_id = s.id
+            where w.mord_id = #{0}
+    </select>
+
+    <select id="listCompanyBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.company_id                                    company_id,
+            w.company_name                                  company_name,
+            w.company_desc                                  company_desc,
+            w.telephone                                     telephone,
+            w.email                                         email,
+            w.fax                                           fax,
+            w.register_id                                   register_id,
+            w.social_credit_code                            social_credit_code,
+            w.taxpayer_identification_number                taxpayer_identification_number,
+            w.organizational_code                           organizational_code,
+            w.address                                       address
+        FROM company w
+        WHERE w.company_name like CONCAT('%', #{value} ,'%') or w.company_desc like CONCAT('%', #{value} ,'%') or w.address like CONCAT('%', #{value} ,'%') or w.telephone like CONCAT('%', #{value} ,'%')
+        ORDER BY w.company_id DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <update id="updateCompany" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE company
+        SET
+            company_name = #{company_name},
+            company_desc = #{company_desc},
+            address = #{address},
+            telephone = #{telephone},
+            email = #{email},
+            fax = #{fax},
+            register_id = #{register_id},
+            social_credit_code = #{social_credit_code},
+            taxpayer_identification_number = #{taxpayer_identification_number},
+            organizational_code = #{organizational_code}
+        WHERE company_id = #{id}
+    </update>
+
+
+    <!-- 按状态搜索（待办事项）(author:bguan) -->
+    <select id="todoSearchByStatus" resultType="Integer">
+        SELECT count(distinct mord_id)
+        FROM orders w
+        WHERE w.order_status = #{status}
+    </select>
+    <select id="todoSearchEventByStatus" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM orders w
+        WHERE w.order_status = #{status}
+    </select>
+
+    <select id="listOrderBySort" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+        w.mord_id                                       mord_id,
+        w.order_id                                      order_id,
+        w.order_status                                  order_status,
+        w.order_type                                    order_type,
+        DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,
+        DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')    delivery_time,
+        c.client_name                                   client_name,
+        c.manager_name                                  manager_name,
+        c.client_affiliation                            client_affiliation,
+        c.shipping_address                              shipping_address,
+        w.invoice_title                                 invoice_title,
+        w.form_of_invoice                               form_of_invoice,
+        c.telephone                                     telephone,
+        c.client_phone                                  client_phone,
+        c.client_email                                  client_email,
+        w.notification_of_delivery                      notification_of_delivery,
+        w.order_status                                 orderStatus,
+        w.order_type                                   orderType,
+        DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      createTime,
+        DATE_FORMAT(w.pay_time, '%Y-%m-%d %T')          payTime,
+        DATE_FORMAT(w.cancel_time, '%Y-%m-%d %T')          cancelTime,
+        DATE_FORMAT(w.refund_time, '%Y-%m-%d %T')          refundTime,
+        DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')          deliveryTime,
+        DATE_FORMAT(w.design_time, '%Y-%m-%d %T')          designTime,
+        DATE_FORMAT(w.production_time, '%Y-%m-%d %T')          productionTime,
+        DATE_FORMAT(w.stock_time, '%Y-%m-%d %T')          stockTime,
+        DATE_FORMAT(w.payed_time, '%Y-%m-%d %T')          payedTime,
+        w.gene_name                                       geneName,
+        w.specifications                                  specifications,
+        w.div_tubes_number                                divTubesNumber,
+        w.sense_53                                        sense_53,
+        w.antisense_53                                    antisense_53,
+        w.chemical_modification                           chemicalModification,
+        w.special_modi                                    specialModi,
+        w.flu_labeling                                    fluLabeling,
+        w.special_instructions                            specialInstructions,
+        w.sc_item_id                                      sc_item_id,
+        w.item_numbers                                   item_numbers,
+        w.item_unit                                       item_unit,
+        w.order_price                                     order_price
+        FROM orders as w inner join client as c
+        on w.client_id=c.client_id and w.order_status != '已终止'
+        <if test="order_status != '所有状态' or value!=''">
+            WHERE
+            <if test="order_status!='所有状态'">
+                w.order_status = #{order_status}
+            </if>
+            <if test="order_status!='所有状态' and value!=''">
+                AND
+            </if>
+            <if test="value!=''">
+                (c.client_name like CONCAT('%', #{value} ,'%')
+                or c.manager_name like CONCAT('%', #{value} ,'%')
+                or c.client_affiliation like CONCAT('%', #{value} ,'%')
+                or c.shipping_address like CONCAT('%', #{value} ,'%')
+                or w.invoice_title like CONCAT('%', #{value} ,'%')
+                or c.telephone like CONCAT('%', #{value} ,'%')
+                or c.client_phone like CONCAT('%', #{value} ,'%')
+                or c.client_email like CONCAT('%', #{value} ,'%')
+                or w.order_type like CONCAT('%', #{value} ,'%')
+                or w.gene_name like CONCAT('%', #{value} ,'%')
+                or w.order_id like CONCAT('%', #{value} ,'%')
+                or w.specifications like CONCAT('%', #{value} ,'%'))
+            </if>
+        </if>
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise>  w.order_id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="countOrderBySort" resultType="Integer">
+        SELECT count(0)
+        FROM orders as w inner join client as c
+        on w.client_id=c.client_id and w.order_status != '已终止'
+         <if test="order_status != '所有状态' or value!=''">
+            WHERE
+            <if test="order_status!='所有状态'">
+                w.order_status = #{order_status}
+            </if>
+            <if test="order_status!='所有状态' and value!=''">
+                AND
+            </if>
+            <if test="value!=''">
+                (c.client_name like CONCAT('%', #{value} ,'%')
+                or c.manager_name like CONCAT('%', #{value} ,'%')
+                or c.client_affiliation like CONCAT('%', #{value} ,'%')
+                or c.shipping_address like CONCAT('%', #{value} ,'%')
+                or w.invoice_title like CONCAT('%', #{value} ,'%')
+                or c.telephone like CONCAT('%', #{value} ,'%')
+                or c.client_phone like CONCAT('%', #{value} ,'%')
+                or c.client_email like CONCAT('%', #{value} ,'%')
+                or w.order_type like CONCAT('%', #{value} ,'%')
+                or w.gene_name like CONCAT('%', #{value} ,'%')
+                or w.order_id like CONCAT('%', #{value} ,'%')
+                or w.specifications like CONCAT('%', #{value} ,'%'))
+            </if>
+        </if>
+    </select>
+
+<!--    &lt;!&ndash; 销账操作 &ndash;&gt; -->
+<!--    <select id="countChargeoffRecord" resultType="Integer">-->
+<!--        SELECT count(0)-->
+<!--        FROM chargeoff_order w-->
+<!--        WHERE w.order_mord_id = #{mord_id}-->
+<!--    </select>-->
+
+<!--    <insert id="addChargeoffRecord" parameterType="com.alibaba.fastjson.JSONObject">-->
+<!--        INSERT INTO chargeoff_order-->
+<!--            (chargeoff_mount, order_mord_id, order_mord_status, update_time)-->
+<!--        VALUES-->
+<!--            (#{sum}, #{mord_id}, #{status}, #{updatetime})-->
+<!--    </insert>-->
+
+<!--    <update id="updateChargeoffRecord" parameterType="com.alibaba.fastjson.JSONObject">-->
+<!--        UPDATE chargeoff_order w-->
+<!--        SET-->
+<!--            chargeoff_mount = #{sum},-->
+<!--            order_mord_status = #{status},-->
+<!--            update_time = #{updatetime}-->
+<!--        WHERE w.order_mord_id = #{mord_id}-->
+<!--    </update>-->
+
+<!--    <select id="listChargeoffRecord" resultType="com.alibaba.fastjson.JSONObject">-->
+<!--        SELECT-->
+<!--            w.id                                                id,-->
+<!--            w.chargeoff_mount                                   chargeoff_mount,-->
+<!--            w.order_mord_id                                     order_mord_id,-->
+<!--            w.order_mord_status                                 order_mord_status,-->
+<!--            date_format(w.create_time, '%Y-%m-%d %T')           create_time,-->
+<!--            date_format(w.update_time, '%Y-%m-%d %T')           update_time-->
+<!--        FROM chargeoff_order w-->
+<!--        ORDER BY w.id DESC-->
+<!--    </select>-->
+
+
+<!--    &lt;!&ndash;以下为销账催账操作&ndash;&gt;-->
+<!--    &lt;!&ndash;销账催账：仅列出账单状态的父订单：["已签收待支付","部分支付","已支付"]&ndash;&gt;-->
+<!--    <select id="countBillOrder2" resultType="Integer">-->
+<!--         SELECT count(DISTINCT mord_id) FROM orders WHERE order_status = '已签收待支付' OR order_status = '部分支付' OR order_status = '已支付'-->
+<!--    </select>-->
+<!--    <select id="countBillOrder" resultType="Integer">-->
+<!--        SELECT count(DISTINCT w.mord_id)-->
+<!--        FROM orders as w-->
+<!--        inner join client as c on w.client_id=c.client_id-->
+<!--        LEFT JOIN chargeoff_order as g ON g.order_mord_id = w.order_id-->
+<!--        WHERE order_mord_status = '已签收待支付' OR order_mord_status = '部分支付' OR order_mord_status = '已支付'-->
+<!--    </select>-->
+<!--    <select id="listBillOrder" resultType="com.alibaba.fastjson.JSONObject">-->
+<!--        SELECT-->
+<!--            w.mord_id                                       mord_id,-->
+<!--            w.order_id                                      order_id,-->
+<!--            w.order_status                                  order_status,-->
+<!--            w.order_type                                    order_type,-->
+<!--            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,-->
+<!--            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')    delivery_time,-->
+<!--            c.client_name                                   client_name,-->
+<!--            c.manager_name                                  manager_name,-->
+<!--            c.client_affiliation                            client_affiliation,-->
+<!--            c.shipping_address                              shipping_address,-->
+<!--            w.invoice_title                                 invoice_title,-->
+<!--            w.form_of_invoice                               form_of_invoice,-->
+<!--            c.telephone                                     telephone,-->
+<!--            c.client_phone                                  client_phone,-->
+<!--            c.client_email                                  client_email,-->
+<!--            w.notification_of_delivery                      notification_of_delivery,-->
+<!--            w.order_status                                 orderStatus,-->
+<!--            w.order_type                                   orderType,-->
+<!--            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      createTime,-->
+<!--            DATE_FORMAT(w.pay_time, '%Y-%m-%d %T')          payTime,-->
+<!--            DATE_FORMAT(w.cancel_time, '%Y-%m-%d %T')          cancelTime,-->
+<!--            DATE_FORMAT(w.refund_time, '%Y-%m-%d %T')          refundTime,-->
+<!--            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')          deliveryTime,-->
+<!--            DATE_FORMAT(w.design_time, '%Y-%m-%d %T')          designTime,-->
+<!--            DATE_FORMAT(w.production_time, '%Y-%m-%d %T')          productionTime,-->
+<!--            DATE_FORMAT(w.stock_time, '%Y-%m-%d %T')          stockTime,-->
+<!--            DATE_FORMAT(w.payed_time, '%Y-%m-%d %T')          payedTime,-->
+<!--            w.gene_name                                       geneName,-->
+<!--            w.specifications                                  specifications,-->
+<!--            w.div_tubes_number                                divTubesNumber,-->
+<!--            w.sense_53                                        sense_53,-->
+<!--            w.antisense_53                                    antisense_53,-->
+<!--            w.chemical_modification                           chemicalModification,-->
+<!--            w.special_modi                                    specialModi,-->
+<!--            w.flu_labeling                                    fluLabeling,-->
+<!--            w.special_instructions                            specialInstructions,-->
+<!--            w.sc_item_id                                      sc_item_id,-->
+<!--            w.item_numbers                                   item_numbers,-->
+<!--            w.item_unit                                       item_unit,-->
+<!--            w.order_people                                    order_people,-->
+<!--            w.sales_manager_id                                sales_manager_id,-->
+<!--            g.chargeoff_mount                                 chargeoff_mount,-->
+<!--            g.order_mord_status                               order_mord_status,-->
+<!--            DATE_FORMAT(g.create_time, '%Y-%m-%d %T')         create_time,-->
+<!--            w.order_price                                     order_price-->
+<!--        FROM orders as w-->
+<!--        inner join client as c on w.client_id=c.client_id-->
+<!--        LEFT JOIN chargeoff_order as g ON g.order_mord_id = w.order_id-->
+<!--        WHERE order_mord_status = '已签收待支付' OR order_mord_status = '部分支付' OR order_mord_status = '已支付'-->
+<!--        GROUP BY w.mord_id-->
+<!--        ORDER BY w.mord_id-->
+<!--         DESC-->
+<!--        LIMIT #{offSet}, #{pageRow}-->
+<!--    </select>-->
+
+<!--    &lt;!&ndash; 搜索与排序&ndash;&gt;-->
+<!--    <select id="countBillOrderBySearch" resultType="Integer">-->
+<!--        SELECT count(DISTINCT w.mord_id)-->
+<!--        FROM orders as w-->
+<!--        inner join client as c on w.client_id=c.client_id-->
+<!--        LEFT JOIN chargeoff_order as g ON g.order_mord_id = w.order_id-->
+<!--        <if test="value == ''">-->
+<!--            <if test="status == '所有状态'">WHERE-->
+<!--                (order_mord_status = '已签收待支付' OR order_mord_status = '部分支付' OR order_mord_status = '已支付')-->
+<!--            </if>-->
+<!--            <if test="status != '所有状态'"> WHERE order_mord_status = #{status}</if>-->
+<!--        </if>-->
+<!--        <if test="value != ''">-->
+<!--            <if test="status == '所有状态'">WHERE-->
+<!--                (order_mord_status = '已签收待支付' OR order_mord_status = '部分支付' OR order_mord_status = '已支付')-->
+<!--            </if>-->
+<!--            <if test="status != '所有状态'"> WHERE order_mord_status = #{status}</if>-->
+<!--            AND-->
+<!--            (c.client_name like CONCAT('%', #{value} ,'%')-->
+<!--            or c.manager_name like CONCAT('%', #{value} ,'%')-->
+<!--            or c.client_affiliation like CONCAT('%', #{value} ,'%')-->
+<!--            or c.shipping_address like CONCAT('%', #{value} ,'%')-->
+<!--            or w.invoice_title like CONCAT('%', #{value} ,'%')-->
+<!--            or c.telephone like CONCAT('%', #{value} ,'%')-->
+<!--            or c.client_phone like CONCAT('%', #{value} ,'%')-->
+<!--            or c.client_email like CONCAT('%', #{value} ,'%')-->
+<!--            or w.order_type like CONCAT('%', #{value} ,'%')-->
+<!--            or w.gene_name like CONCAT('%', #{value} ,'%')-->
+<!--            or w.gene_name like CONCAT('%', #{value} ,'%')-->
+<!--            or w.specifications like CONCAT('%', #{value} ,'%')-->
+<!--            or w.order_status like CONCAT('%', #{value} ,'%'))-->
+<!--        </if>-->
+<!--    </select>-->
+<!--    <select id="listBillOrderBySearch" resultType="com.alibaba.fastjson.JSONObject">-->
+<!--        SELECT-->
+<!--        w.mord_id                                       mord_id,-->
+<!--        w.order_id                                      order_id,-->
+<!--        w.order_status                                  order_status,-->
+<!--        DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,-->
+<!--        DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')    delivery_time,-->
+<!--        c.client_name                                   client_name,-->
+<!--        c.manager_name                                  manager_name,-->
+<!--        c.client_affiliation                            client_affiliation,-->
+<!--        c.shipping_address                              shipping_address,-->
+<!--        w.invoice_title                                 invoice_title,-->
+<!--        w.form_of_invoice                               form_of_invoice,-->
+<!--        c.telephone                                     telephone,-->
+<!--        c.client_phone                                  client_phone,-->
+<!--        c.client_email                                  client_email,-->
+<!--        w.notification_of_delivery                      notification_of_delivery,-->
+<!--        w.order_status                                 orderStatus,-->
+<!--        w.order_type                                   orderType,-->
+<!--        DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      createTime,-->
+<!--        DATE_FORMAT(w.pay_time, '%Y-%m-%d %T')          payTime,-->
+<!--        DATE_FORMAT(w.cancel_time, '%Y-%m-%d %T')          cancelTime,-->
+<!--        DATE_FORMAT(w.refund_time, '%Y-%m-%d %T')          refundTime,-->
+<!--        DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')          deliveryTime,-->
+<!--        DATE_FORMAT(w.design_time, '%Y-%m-%d %T')          designTime,-->
+<!--        DATE_FORMAT(w.production_time, '%Y-%m-%d %T')          productionTime,-->
+<!--        DATE_FORMAT(w.stock_time, '%Y-%m-%d %T')          stockTime,-->
+<!--        DATE_FORMAT(w.payed_time, '%Y-%m-%d %T')          payedTime,-->
+<!--        w.gene_name                                       geneName,-->
+<!--        w.specifications                                  specifications,-->
+<!--        w.div_tubes_number                                divTubesNumber,-->
+<!--        w.sense_53                                        sense_53,-->
+<!--        w.antisense_53                                    antisense_53,-->
+<!--        w.chemical_modification                           chemicalModification,-->
+<!--        w.special_modi                                    specialModi,-->
+<!--        w.flu_labeling                                    fluLabeling,-->
+<!--        w.special_instructions                            specialInstructions,-->
+<!--        w.sc_item_id                                      sc_item_id,-->
+<!--        w.item_numbers                                   item_numbers,-->
+<!--        w.item_unit                                       item_unit,-->
+<!--        w.order_people                                    order_people,-->
+<!--        w.sales_manager_id                                sales_manager_id,-->
+<!--        g.chargeoff_mount                                 chargeoff_mount,-->
+<!--        g.order_mord_status                               order_mord_status,-->
+<!--        DATE_FORMAT(g.create_time, '%Y-%m-%d %T')         create_time,-->
+<!--        w.order_price                                     order_price-->
+<!--        FROM orders as w-->
+<!--        inner join client as c on w.client_id=c.client_id-->
+<!--        LEFT JOIN chargeoff_order as g ON g.order_mord_id = w.order_id-->
+<!--        <if test="value == ''">-->
+<!--            <if test="status == '所有状态'">WHERE-->
+<!--                (order_mord_status = '已签收待支付' OR order_mord_status = '部分支付' OR order_mord_status = '已支付')-->
+<!--            </if>-->
+<!--            <if test="status != '所有状态'"> WHERE order_mord_status = #{status}</if>-->
+<!--        </if>-->
+<!--        <if test="value != ''">-->
+<!--            <if test="status == '所有状态'">WHERE-->
+<!--                (order_mord_status = '已签收待支付' OR order_mord_status = '部分支付' OR order_mord_status = '已支付')-->
+<!--            </if>-->
+<!--            <if test="status != '所有状态'"> WHERE order_mord_status = #{status}</if>-->
+<!--             AND-->
+<!--            (c.client_name like CONCAT('%', #{value} ,'%')-->
+<!--            or c.manager_name like CONCAT('%', #{value} ,'%')-->
+<!--            or c.client_affiliation like CONCAT('%', #{value} ,'%')-->
+<!--            or c.shipping_address like CONCAT('%', #{value} ,'%')-->
+<!--            or w.invoice_title like CONCAT('%', #{value} ,'%')-->
+<!--            or c.telephone like CONCAT('%', #{value} ,'%')-->
+<!--            or c.client_phone like CONCAT('%', #{value} ,'%')-->
+<!--            or c.client_email like CONCAT('%', #{value} ,'%')-->
+<!--            or w.order_type like CONCAT('%', #{value} ,'%')-->
+<!--            or w.gene_name like CONCAT('%', #{value} ,'%')-->
+<!--            or w.gene_name like CONCAT('%', #{value} ,'%')-->
+<!--            or w.specifications like CONCAT('%', #{value} ,'%')-->
+<!--            or w.order_status like CONCAT('%', #{value} ,'%'))-->
+<!--        </if>-->
+<!--        GROUP BY w.mord_id-->
+<!--        ORDER BY-->
+<!--        <choose>-->
+<!--            <when test="prop!=null and prop!=''">-->
+<!--                ${prop}-->
+<!--            </when>-->
+<!--            <otherwise> mord_id </otherwise>-->
+<!--        </choose>-->
+<!--        <choose>-->
+<!--            <when test="order=='ascending'">-->
+<!--                ASC-->
+<!--            </when>-->
+<!--            <otherwise> DESC </otherwise>-->
+<!--        </choose>-->
+<!--        LIMIT #{offSet}, #{pageRow}-->
+<!--    </select>-->
+
+<!--    &lt;!&ndash;  催账记录  &ndash;&gt;-->
+<!--    <insert id="logUigeBillRecord" parameterType="com.alibaba.fastjson.JSONObject">-->
+<!--        INSERT INTO urge_bill-->
+<!--            (saling_mord_id, urge_time, from_staff_id, to_staff_id, urge_reason, urge_action, status, from_email)-->
+<!--        VALUES-->
+<!--            (#{salingMordId}, #{noteTime}, #{fromStaffId}, #{toStaffId}, #{urgeReason}, #{urgeAction}, #{status1}, #{fromEmail})-->
+<!--    </insert>-->
+
+
+
+
+    <select id="listSubSaleOrderByParams" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            <!-- 系统字段 -->
+            o.mord_id                                       mord_id,                            <!--父订单编号-->
+            o.order_id                                      order_id,                           <!--子订单编号-->
+            o.order_status                                  order_status,                       <!--订单状态-->
+            o.order_type                                    order_type,                         <!--订单类型（枚举值）-->
+            o.is_import                                     is_import,                          <!--是否为导入订单-->
+            o.imported_staff                                imported_staff,                     <!--导入人员ID-->
+            o.imported_time                                 imported_time,                      <!--导入时间-->
+            o.design_time                                   design_time,                        <!--设计完成日期-->
+            o.production_time                               production_time,                    <!--生产完成日期-->
+            o.stock_time                                    stock_time,                         <!--出库完成日期-->
+            o.payed_time                                    payed_time,                         <!--支付完成日期-->
+
+            <!-- 未启用，催账模块字段 -->
+            o.is_payed                                      is_payed,                           <!--支付情况-->
+            o.cancel_time                                   cancel_time,                        <!--取消时间-->
+            o.refund_time                                   refund_time,                        <!--退款时间-->
+            o.pay_time                                      pay_time,                           <!--支付时间-->
+
+            <!-- 业务表头字段 -->
+            c.client_name                                   client_name,                        <!--客户姓名-->
+            c.manager_name                                  manager_name,                       <!--导师/管家姓名-->
+            c.client_affiliation                            client_affiliation,                 <!--客户单位-->
+            c.shipping_address                              shipping_address,                   <!--送货地址-->
+            c.postal_code                                   postal_code,                        <!--邮编-->
+            c.telephone                                     telephone,                          <!--固定电话-->
+            c.client_phone                                  client_phone,                       <!--手机-->
+            c.client_email                                  client_email,                       <!--邮箱-->
+
+            u.username                                      username,                           <!--销售经理姓名-->
+
+            o.create_time                                   create_time,                        <!--订购日期-->
+            o.delivery_time                                 delivery_time,                      <!--应交货日期-->
+            o.invoice_title                                 invoice_title,                      <!--发票抬头-->
+            o.form_of_invoice                               form_of_invoice,                    <!--开票形式-->
+            o.notification_of_delivery                      notification_of_delivery,           <!--发货通知方式-->
+            o.remark                                        remark,                             <!--订单上的备注-->
+            o.courier_scervices_company                     courier_scervices_company,          <!--快递公司-->
+
+            <!-- 业务表体字段 -->
+            o.catalog_id                                    catalog_id,                         <!--目录号-->
+            o.gene_name_type                                gene_name_type,                     <!--基因名称/物种-->
+            o.gene_name                                     gene_name,                          <!--基因名称-->
+            o.product_type                                  product_type,                       <!--产品类型-->
+            o.product_name                                  product_name,                       <!--产品名称-->
+            o.carrier_type                                  carrier_type,                       <!--载体类型-->
+            o.carrier_vector                                carrier_vector,                     <!--载体名称-->
+            o.viruses_type                                  viruses_type,                       <!--病毒类型-->
+            o.order_quantity                                order_quantity,                     <!--订购量-->
+            o.gene_length                                   gene_length,                        <!--基因长度-->
+            o.sequence_53                                   sequence_53,                        <!--序列 5'-3'-->
+            o.sense_53                                      sense_53,                           <!--Sense 5'-3'-->
+            o.antisense_53                                  antisense_53,                       <!--Antisense 5'-3'-->
+            o.div_tubes_number                              div_tubes_number,                   <!--分装管数-->
+            o.chemical_modification                         chemical_modification,              <!--化学修饰-->
+            o.flu_labeling                                  flu_labeling,                       <!--荧光标记-->
+            o.special_modi                                  special_modi,                       <!--特殊修饰-->
+            o.special_instructions                          special_instructions,               <!--特殊说明-->
+            o.base_number                                   base_number,                        <!--碱基数-->
+            o.modifi_5                                      modifi_5,                           <!--修饰方式5'-->
+            o.modifi_3                                      modifi_3,                           <!--修饰方式3'-->
+            o.purification_method                           purification_method,                <!--纯化方式-->
+            o.titer_requirement                             titer_requirement,                  <!--滴度要求-->
+            o.cloning_site                                  cloning_site,                       <!--克隆位点-->
+            o.item_numbers                                  item_numbers,                       <!--订购数量-->
+            o.item_unit                                     item_unit,                          <!--订购单位-->
+
+            <!-- 生产清单字段 -->
+            p.product_type                                  product_type                        <!--生产类型-->
+
+        FROM orders as o
+        LEFT JOIN client as c on o.client_id = c.client_id
+        LEFT JOIN sys_user as u on o.sales_manager_id = u.id
+        LEFT JOIN product_order as p on o.order_id = p.sales_son_order_id
+        WHERE 1=1
+            <if test="mord_id">
+                AND o.mord_id = #{mord_id}
+            </if>
+            <if test="mord_id_list">
+                AND o.mord_id IN
+                <foreach collection="mord_id_list" open="(" separator="," close=")" item="id">
+                    #{id}
+                </foreach>
+            </if>
+        ORDER BY o.order_id
+    </select>
+
+</mapper>

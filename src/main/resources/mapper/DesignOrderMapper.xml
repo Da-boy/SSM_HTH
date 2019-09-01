@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.DesignOrderDao">
+
+    <insert id="addDesignOrder" parameterType="com.alibaba.fastjson.JSONObject">
+        insert into design_order (sales_mord_id, sales_son_order_id,
+      design_content1, design_content2, design_content3,
+      design_file_path, create_time, create_staff_id,
+      accept_time, accept_staff_id, design_done_time,
+      design_staff_id, cancel_time, cancel_staff_id,
+      mark)
+    values (#{sales_mord_id,jdbcType=BIGINT}, #{sales_son_order_id,jdbcType=BIGINT},
+      #{design_content1,jdbcType=VARCHAR}, #{design_content2,jdbcType=VARCHAR}, #{design_content3,jdbcType=VARCHAR},
+      #{design_file_path,jdbcType=VARCHAR}, #{create_time,jdbcType=TIMESTAMP}, #{create_staff_id,jdbcType=BIGINT},
+      #{accept_time,jdbcType=TIMESTAMP}, #{accept_staff_id,jdbcType=BIGINT}, #{design_done_time,jdbcType=TIMESTAMP},
+      #{design_staff_id,jdbcType=BIGINT}, #{cancel_time,jdbcType=TIMESTAMP}, #{cancel_staff_id,jdbcType=BIGINT},
+      #{mark,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="countDesignOrder" resultType="Integer">
+        SELECT count(distinct w.sales_mord_id)
+        FROM design_order w
+        LEFT JOIN `orders`  on  `orders`.order_id = w.sales_son_order_id
+        where `orders`.order_status like '设计%'
+    </select>
+
+    <select id="listDesignOrder" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.sales_mord_id, w.sales_son_order_id,
+            w.design_order_id,w.design_content1, w.design_content2, w.design_content3,
+            w.design_file_path, DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time , w.create_staff_id,
+            w.accept_time, w.accept_staff_id, w.design_done_time,
+            w.design_staff_id, w.cancel_time, w.cancel_staff_id, w.mark,
+            `orders`.catalog_id, `orders`.product_name, `orders`.gene_name,`orders`.gene_name_type,`orders`.specifications,
+            `orders`.gene_type,`orders`.special_instructions,`orders`.order_status
+        FROM design_order w
+        LEFT JOIN `orders`  on  `orders`.order_id = w.sales_son_order_id
+        where `orders`.order_status like '设计%'
+        GROUP BY w.sales_mord_id
+        ORDER BY w.design_order_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="countDesignMordOrder" resultType="Integer">
+        SELECT count(distinct w.sales_mord_id)
+        FROM design_order w
+        LEFT JOIN `orders`  on  `orders`.mord_id = w.sales_mord_id
+        where `orders`.order_status like '设计%'
+    </select>
+
+    <select id="listDesignMordOrder" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.sales_mord_id,
+            w.sales_son_order_id,
+            w.design_order_id,
+            w.design_content1, w.design_content2, w.design_content3,
+            w.design_file_path, DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time , w.create_staff_id,
+            w.accept_time, w.accept_staff_id, w.design_done_time,
+            w.design_staff_id, w.cancel_time, w.cancel_staff_id, w.mark,
+            `orders`.catalog_id, `orders`.product_name, `orders`.gene_name,`orders`.gene_name_type,`orders`.specifications,
+            `orders`.gene_type,`orders`.special_instructions,`orders`.order_status
+        FROM design_order w
+        LEFT JOIN `orders`  on  `orders`.mord_id = w.sales_mord_id
+        where `orders`.order_status like '设计%'
+        GROUP BY w.sales_mord_id
+        ORDER BY w.design_order_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <!--<select id="listDesignOrder" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+
+            sales_mord_id, sales_son_order_id,
+      design_order_id,design_content1, design_content2, design_content3,
+      design_file_path, create_time, create_staff_id,
+      accept_time, accept_staff_id, design_done_time,
+      design_staff_id, cancel_time, cancel_staff_id,
+      mark
+        FROM design_order w
+        ORDER BY w.design_order_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>-->
+
+    <select id="getDesignOrderContentFixedById" resultType="com.alibaba.fastjson.JSONObject">
+        select `orders`.product_name,`orders`.gene_name,`orders`.specifications
+        from `orders`
+        where `orders`.order_id=#{sales_son_order_id}
+    </select>
+    <update id="updateDesignOrderMark" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE design_order
+        set mark = #{mark,jdbcType=VARCHAR}
+    where design_order_id = #{design_order_id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateOrdersStatusBySSOI" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        set orders.order_status = #{order_status,jdbcType=VARCHAR}
+    where orders.order_id = #{sales_son_order_id,jdbcType=VARCHAR}
+    </update>
+
+    <select id="listDesignOrderBySearch"
+            resultType="com.alibaba.fastjson.JSONObject">
+        select
+        w.sales_mord_id,
+        w.sales_son_order_id,
+        w.design_order_id,
+        w.design_content1,
+        w.design_content2,
+        w.design_content3,
+        w.design_file_path,
+        DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time ,
+        w.create_staff_id,
+        w.accept_time,
+        w.accept_staff_id,
+        w.design_done_time,
+        w.design_staff_id,
+        w.cancel_time,
+        w.cancel_staff_id,
+        w.mark,o.catalog_id,
+        o.product_name,
+        o.gene_name,
+        o.gene_name_type,
+        o.specifications,
+        o.gene_type,
+        o.special_instructions,
+        o.order_status
+        FROM (design_order w
+        LEFT JOIN orders o on w.sales_son_order_id = o.order_id)
+        LEFT JOIN `client` c ON o.client_id = c.client_id
+        LEFT JOIN sys_user u ON u.id = w.accept_staff_id
+        LEFT JOIN department dep ON dep.department_id = w.design_major_dept
+        <if test="status!='所有状态' or value!=''">
+            WHERE
+            <if test="status!='所有状态'">
+                order_status = #{status}
+            </if>
+            <if test="status!='所有状态' and value!=''"> AND </if>
+            <if test="value!=''">
+                (w.design_order_id like CONCAT('%', #{value} ,'%')
+                OR w.mark like CONCAT('%', #{value} ,'%'))
+            </if>
+        </if>
+        <if test="status=='所有状态' and value==''">
+            where order_status like '设计%'
+        </if>
+        GROUP BY w.sales_mord_id
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise> w.create_time </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="countDesignOrderBySearch" resultType="Integer">
+        select count(distinct w.sales_mord_id)
+        FROM (design_order w LEFT JOIN orders o
+        on w.sales_son_order_id = o.order_id)
+        LEFT JOIN `client` c
+        ON o.client_id = c.client_id
+        LEFT JOIN sys_user u ON u.id = w.accept_staff_id
+        LEFT JOIN department dep ON dep.department_id = w.design_major_dept
+        WHERE
+        <if test="status!='所有状态'">
+            order_status = #{status} AND
+        </if>
+        <if test="status=='所有状态'">
+            order_status like '设计%' AND
+        </if>
+        (w.design_order_id like CONCAT('%', #{value} ,'%')
+        OR w.mark like CONCAT('%', #{value} ,'%'))
+    </select>
+
+
+    <update id="updateDesignOrder" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE design_order
+        set sales_mord_id = #{sales_mord_id,jdbcType=BIGINT},
+      sales_son_order_id = #{sales_son_order_id,jdbcType=BIGINT},
+      design_content1 = #{design_content1,jdbcType=VARCHAR},
+      design_content2 = #{design_content2,jdbcType=VARCHAR},
+      design_content3 = #{design_content3,jdbcType=VARCHAR},
+      design_file_path = #{design_file_path,jdbcType=VARCHAR},
+      create_time = #{create_time,jdbcType=TIMESTAMP},
+      create_staff_id = #{create_staff_id,jdbcType=BIGINT},
+      accept_time = #{accept_time,jdbcType=TIMESTAMP},
+      accept_staff_id = #{accept_staff_id,jdbcType=BIGINT},
+      design_done_time = #{design_done_time,jdbcType=TIMESTAMP},
+      design_staff_id = #{design_staff_id,jdbcType=BIGINT},
+      cancel_time = #{cancel_time,jdbcType=TIMESTAMP},
+      cancel_staff_id = #{cancel_staff_id,jdbcType=BIGINT},
+      mark = #{mark,jdbcType=VARCHAR}
+    where design_order_id = #{design_order_id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteDesignOrder" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE FROM design_order
+        WHERE design_order_id = #{design_order_id}
+    </delete>
+
+
+    <!-- 按状态搜索（待办事项）(author:bguan) -->
+    <select id="todoSearchByStatus" resultType="Integer">
+        SELECT count(distinct w.sales_mord_id)
+        FROM design_order w
+            LEFT JOIN orders o ON w.sales_son_order_id = o.order_id
+        WHERE o.order_status = #{status}
+    </select>
+    <select id="todoSearchEventByStatus" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM design_order w
+            LEFT JOIN orders o ON w.sales_son_order_id = o.order_id
+        WHERE o.order_status = #{status}
+    </select>
+
+    <!--    按列排序-->
+    <select id="listDesignOrderBySort" resultType="com.alibaba.fastjson.JSONObject">
+        select
+        w.sales_mord_id, w.sales_son_order_id,
+        w.design_order_id,w.design_content1, w.design_content2, w.design_content3,
+        w.design_file_path, DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time , w.create_staff_id,
+        w.accept_time, w.accept_staff_id, w.design_done_time,
+        w.design_staff_id, w.cancel_time, w.cancel_staff_id,
+        w.mark,o.catalog_id, o.product_name, o.gene_name,o.gene_name_type,o.specifications,
+        o.gene_type,o.special_instructions,o.order_status
+        FROM (design_order w LEFT JOIN orders o
+        on w.sales_son_order_id = o.order_id)
+        LEFT JOIN `client` c
+        ON o.client_id = c.client_id
+        LEFT JOIN sys_user u ON u.id = w.accept_staff_id
+        LEFT JOIN department dep ON dep.department_id = w.design_major_dept
+        <if test="status!='所有状态' or value!=''">
+            WHERE
+            <if test="status!='所有状态'">
+                order_status = #{status}
+            </if>
+            <if test="status!='所有状态' and value!=''"> AND </if>
+            <if test="value!=''">
+                (w.design_order_id like CONCAT('%', #{value} ,'%')
+                OR w.mark like CONCAT('%', #{value} ,'%'))
+            </if>
+        </if>
+        <if test="status=='所有状态' and value==''">
+          where order_status like '设计%'
+        </if>
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise> w.create_time </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="countDesignOrderBySort" resultType="Integer">
+        select count(0)
+        FROM (design_order w LEFT JOIN orders o
+        on w.sales_son_order_id = o.order_id)
+        LEFT JOIN `client` c
+        ON o.client_id = c.client_id
+        LEFT JOIN sys_user u ON u.id = w.accept_staff_id
+        LEFT JOIN department dep ON dep.department_id = w.design_major_dept
+        <if test="status!='所有状态' or value!=''">
+            WHERE
+            <if test="status!='所有状态'">
+                order_status = #{status}
+            </if>
+            <if test="status!='所有状态' and value!=''"> AND </if>
+            <if test="value!=''">
+                (w.design_order_id like CONCAT('%', #{value} ,'%')
+                OR w.mark like CONCAT('%', #{value} ,'%'))
+            </if>
+        </if>
+        <if test="status=='所有状态' and value==''">
+            where order_status like '设计%'
+        </if>
+    </select>
+</mapper>

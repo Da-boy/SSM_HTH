@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.ProductDao">
+
+    <insert id="addProduct" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO product_order
+            (sales_son_order_id, product_type, product_status, sc_item_id, synthetic_specification, num_divided_tubes, sense, antisense ,
+            chemical_modification, special_modification, fluorescent_labeling, special_instructions, create_staff_id, order_major_dept_id,
+            item_numbers, item_unit)
+        VALUES
+            (#{saling_son_order_id}, #{product_type}, #{order_status}, #{sc_item_id}, #{synthetic_specification}, #{num_divided_tubes}, #{sense}, #{antisense},
+             #{chemical_modification}, #{special_modification}, #{fluorescent_labeling}, #{special_instructions}, #{create_staff_id}, #{order_major_dept_id},
+             #{item_numbers}, #{item_unit})
+    </insert>
+
+    <select id="countProduct" resultType="Integer">
+        SELECT count(0)
+        FROM product_order w
+    </select>
+
+
+    <select id="getProductByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM product_order w
+        WHERE w.content = #{content}
+    </select>
+
+
+    <select id="countProductBySearch" resultType="Integer">
+        SELECT count(0)
+        FROM product_order w
+            LEFT JOIN orders o ON w.sales_son_order_id = o.order_id
+            LEFT JOIN client c ON o.client_id = c.client_id
+            LEFT JOIN dim_sc_item d ON w.sc_item_id = d.sc_item_id
+            LEFT JOIN department de ON w.order_major_dept_id = de.department_id
+        WHERE
+            <if test="status == '所有状态'">
+                IF(w.sales_son_order_id, o.order_status, w.product_status) like '生产%' AND
+            </if>
+            <if test="status!='所有状态'">
+                IF(w.sales_son_order_id, o.order_status, w.product_status) = #{status} AND
+            </if>
+            <if test="order_type !='所有类型'">
+                o.order_type = #{order_type} AND
+            </if>
+            (d.sc_item_name like CONCAT('%', #{value} ,'%')
+            or w.product_order_id like CONCAT('%', #{value} ,'%')
+            or IF(w.sales_son_order_id, o.order_status, w.product_status) like CONCAT('%', #{value} ,'%')
+            or w.product_type like CONCAT('%', #{value} ,'%')
+            or w.synthetic_specification like CONCAT('%', #{value} ,'%')
+            or w.num_divided_tubes like CONCAT('%', #{value} ,'%')
+            or w.sense like CONCAT('%', #{value} ,'%')
+            or w.antisense like CONCAT('%', #{value} ,'%')
+            or w.chemical_modification like CONCAT('%', #{value} ,'%')
+            or w.special_modification like CONCAT('%', #{value} ,'%')
+            or c.client_name like CONCAT('%', #{value} ,'%')
+            or o.mord_id like CONCAT('%', #{value} ,'%')
+            or de.department_name like CONCAT('%', #{value} ,'%')
+            or w.special_instructions like CONCAT('%', #{value} ,'%'))
+    </select>
+
+    <select id="listProduct" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            o.mord_id                                       mord_id,
+            c.client_name                                   client_name,
+            DATE_FORMAT(o.create_time, '%Y-%m-%d %T')      mord_create_time,
+            DATE_FORMAT(o.delivery_time, '%Y-%m-%d %T')    delivery_time,
+            IF(w.sales_son_order_id, o.order_status, w.product_status)                order_status,
+            w.product_order_id                              product_order_id,
+            w.sales_son_order_id                            sales_son_order_id,
+            w.product_type                                  product_type,
+            w.sc_item_id                                    sc_item_id,
+            d.sc_item_name                                  sc_item_name,
+            w.synthetic_specification                       synthetic_specification,
+            w.num_divided_tubes                             num_divided_tubes,
+            w.sense                                         sense,
+            w.antisense                                     antisense,
+            w.chemical_modification                         chemical_modification,
+            w.special_modification                          special_modification,
+            w.fluorescent_labeling                          fluorescent_labeling,
+            w.special_instructions                          special_instructions,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,
+            w.create_staff_id                               create_staff_id,
+            de.department_name                              department_name,
+            w.item_numbers                                  item_numbers,
+            w.item_unit                                     item_unit
+        FROM product_order w
+            LEFT JOIN orders o ON w.sales_son_order_id = o.order_id
+            LEFT JOIN client c ON o.client_id = c.client_id
+            LEFT JOIN dim_sc_item d ON w.sc_item_id = d.sc_item_id
+            LEFT JOIN department de ON w.order_major_dept_id = de.department_id
+        ORDER BY w.product_order_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listProductBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            o.mord_id                                       mord_id,
+            o.order_type                                    order_type,
+            c.client_name                                   client_name,
+            DATE_FORMAT(o.create_time, '%Y-%m-%d %T')      mord_create_time,
+            DATE_FORMAT(o.delivery_time, '%Y-%m-%d %T')    delivery_time,
+            IF(w.sales_son_order_id, o.order_status, w.product_status)                order_status,
+            w.product_order_id                              product_order_id,
+            w.sales_son_order_id                            sales_son_order_id,
+            w.product_type                                  product_type,
+            w.sc_item_id                                    sc_item_id,
+            d.sc_item_name                                  sc_item_name,
+            w.synthetic_specification                       synthetic_specification,
+            w.num_divided_tubes                             num_divided_tubes,
+            w.sense                                         sense,
+            w.antisense                                     antisense,
+            w.chemical_modification                         chemical_modification,
+            w.special_modification                          special_modification,
+            w.fluorescent_labeling                          fluorescent_labeling,
+            w.special_instructions                          special_instructions,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,
+            w.create_staff_id                               create_staff_id,
+            de.department_name                              department_name,
+            w.item_numbers                                  item_numbers,
+            w.item_unit                                     item_unit
+        FROM product_order w
+            LEFT JOIN orders o ON w.sales_son_order_id = o.order_id
+            LEFT JOIN client c ON o.client_id = c.client_id
+            LEFT JOIN dim_sc_item d ON w.sc_item_id = d.sc_item_id
+            LEFT JOIN department de ON w.order_major_dept_id = de.department_id
+        WHERE
+            <if test="status == '所有状态'">
+                IF(w.sales_son_order_id, o.order_status, w.product_status) like '生产%' AND
+            </if>
+            <if test="status!='所有状态'">
+                IF(w.sales_son_order_id, o.order_status, w.product_status) = #{status} AND
+            </if>
+            <if test="order_type !='所有类型'">
+                o.order_type = #{order_type} AND
+            </if>
+            (d.sc_item_name like CONCAT('%', #{value} ,'%')
+                or w.product_order_id like CONCAT('%', #{value} ,'%')
+                or IF(w.sales_son_order_id, o.order_status, w.product_status) like CONCAT('%', #{value} ,'%')
+                or w.product_type like CONCAT('%', #{value} ,'%')
+                or w.synthetic_specification like CONCAT('%', #{value} ,'%')
+                or w.num_divided_tubes like CONCAT('%', #{value} ,'%')
+                or w.sense like CONCAT('%', #{value} ,'%')
+                or w.antisense like CONCAT('%', #{value} ,'%')
+                or w.chemical_modification like CONCAT('%', #{value} ,'%')
+                or w.special_modification like CONCAT('%', #{value} ,'%')
+                or c.client_name like CONCAT('%', #{value} ,'%')
+                or o.mord_id like CONCAT('%', #{value} ,'%')
+                or de.department_name like CONCAT('%', #{value} ,'%')
+                or w.special_instructions like CONCAT('%', #{value} ,'%'))
+        ORDER BY
+            <choose>
+                <when test="prop!=''">
+                    ${prop}
+                </when>
+                <otherwise> w.product_order_id </otherwise>
+            </choose>
+            <choose>
+                <when test="order=='ascending'"> ASC </when>
+                <otherwise> DESC </otherwise>
+            </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+
+    <update id="updateProduct" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE product_order
+        SET
+            product_type = #{product_type},
+            sc_item_id = #{sc_item_id},
+            synthetic_specification = #{synthetic_specification},
+            num_divided_tubes = #{num_divided_tubes},
+            sense = #{sense},
+            antisense = #{antisense},
+            chemical_modification = #{chemical_modification},
+            special_modification = #{special_modification},
+            special_instructions = #{special_instructions},
+            fluorescent_labeling = #{fluorescent_labeling},
+            item_numbers = #{item_numbers},
+            item_unit = #{item_unit}
+        WHERE product_order_id = #{product_order_id}
+    </update>
+
+    <update id="updateOrdersStatus" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+            order_status = #{order_status}
+        WHERE order_id = #{order_id}
+    </update>
+
+
+
+    <update id="updateProductStatus" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE product_order
+        SET
+            product_status = #{order_status}
+        WHERE product_order_id = #{product_order_id}
+    </update>
+
+    <update id="auditProductForProduct" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE product_order
+        SET
+            mark = #{reason}
+        WHERE product_order_id = #{product_order_id}
+    </update>
+
+    <delete id="deleteProduct" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE FROM product_order
+        WHERE product_order_id = #{product_order_id}
+    </delete>
+
+    <insert id="createEntry" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO warehouse_entry
+            (warehousing_son_order_id, warehousing_type, goods_id, storage_put_num_ought, storage_put_num, unit, saleing_son_order_id, product_order_id, product_time, saleing_mord_id, warehousing_status, warehousing_mord_id)
+        VALUES
+            (#{warehousing_son_order_id}, "生产入库", #{sc_item_id}, #{item_numbers}, #{item_numbers}, #{item_unit}, #{sales_son_order_id}, #{product_order_id}, #{create_time}, #{mord_id}, #{order_status},#{warehousing_son_order_id})
+    </insert>
+
+    <select id="countScItem" resultType="Integer">
+        SELECT count(0)
+        FROM dim_sc_item w
+    </select>
+
+    <select id="listScItem" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.sc_item_id                                sc_item_id,
+            w.sc_item_name                              sc_item_name,
+            w.sc_item_type                              sc_item_type,
+            w.sc_item_desp                              sc_item_desp,
+            w.sc_item_attribute                         sc_item_attribute,
+            w.is_gift                                   is_gift,
+            w.is_chemicals                              is_chemicals,
+            w.is_drugs                                  is_drugs,
+            w.is_explosive                              is_explosive,
+            w.is_packing                                is_packing,
+            w.is_consumable                             is_consumable,
+            w.inspection_cycle                          inspection_cycle,
+            w.sc_item_price                             sc_item_price
+        FROM dim_sc_item w
+        ORDER BY w.sc_item_name
+    </select>
+
+    <!-- 按状态搜索（待办事项）(author:bguan) -->
+    <select id="todoSearchByStatus_bak" resultType="Integer">
+        SELECT count(0)
+        FROM product_order w
+            LEFT JOIN orders o ON w.sales_son_order_id = o.order_id
+        WHERE o.order_status = #{status}
+    </select>
+    <select id="todoSearchByStatus" resultType="Integer">
+        SELECT count(0)
+        FROM product_order w
+            LEFT JOIN orders o ON w.sales_son_order_id = o.order_id
+        WHERE IF(w.sales_son_order_id, o.order_status, w.product_status) = #{status}
+    </select>
+    <select id="todoSearchEventByStatus" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM product_order w
+            LEFT JOIN orders o ON w.sales_son_order_id = o.order_id
+        WHERE o.order_status = #{status}
+    </select>
+</mapper>

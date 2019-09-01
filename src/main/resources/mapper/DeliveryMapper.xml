@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.DeliveryDao">
+
+    <select id="countDelivery" resultType="Integer">
+        SELECT count(0) FROM order_delivery
+    </select>
+
+    <select id="listDelivery" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.mord_id                                               mord_id,
+            w.order_status                                          order_status,
+            w.order_type                                            order_type,
+            w.client_id                                             client_id,
+            w.product_name                                          product_name,
+            c.client_name                                           client_name,
+            c.manager_name                                          manager_name,
+            c.client_affiliation                                    client_affiliation,
+            c.shipping_address                                      shipping_address,
+            c.telephone                                             telephone,
+            c.client_phone                                          client_phone,
+            c.client_email                                          client_email,
+            s.username                                              username,
+            s.phone                                                 phone,
+            DATE_FORMAT(m.create_time, '%Y-%m-%d %T')               create_time,
+            m.delivery_no                                           delivery_no,
+            m.delivery_company                                      delivery_company,
+            m.delivery_status                                       delivery_status,
+            DATE_FORMAT(m.pickup_time, '%Y-%m-%d %T')               pickup_time,
+            DATE_FORMAT(m.pickup_time_required, '%Y-%m-%d %T')      pickup_time_required,
+            m.remark                                                remark
+        FROM orders as w
+        LEFT join client as c on w.client_id=c.client_id
+        LEFT JOIN sys_user as s on w.imported_staff=s.id
+        LEFT JOIN order_delivery as m on w.mord_id=m.order_mord_id
+        WHERE w.order_status != '已终止'AND
+        (delivery_status = '待发货' OR delivery_status = '物流发单已创建' OR delivery_status = '待签收' OR m.delivery_status = '已签收待支付')
+        GROUP BY w.mord_id
+        ORDER BY w.mord_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <!--    按列排序+搜索-->
+    <select id="listDeliveryBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+        w.mord_id                                           mord_id,
+        w.order_status                                      order_status,
+        w.order_type                                        order_type,
+        w.client_id                                         client_id,
+        w.product_name                                      product_name,
+        c.client_name                                       client_name,
+        c.manager_name                                      manager_name,
+        c.client_affiliation                                client_affiliation,
+        c.shipping_address                                  shipping_address,
+        c.telephone                                         telephone,
+        c.client_phone                                      client_phone,
+        c.client_email                                      client_email,
+        s.username                                          username,
+        s.phone                                             phone,
+        DATE_FORMAT(m.create_time, '%Y-%m-%d %T')           create_time,
+        m.delivery_no                                       delivery_no,
+        m.delivery_company                                  delivery_company,
+        m.delivery_status                                   delivery_status,
+        DATE_FORMAT(m.pickup_time, '%Y-%m-%d %T')           pickup_time,
+        m.pickup_time_required                              pickup_time_required,
+        m.remark                                            remark
+        FROM orders as w
+        LEFT join client as c on w.client_id=c.client_id
+        LEFT JOIN sys_user as s on w.imported_staff=s.id
+        LEFT JOIN order_delivery as m on w.mord_id=m.order_mord_id
+        <if test="value == null">
+            <if test="status == '所有状态'">WHERE
+                (m.delivery_status = '待发货' OR m.delivery_status = '物流发单已创建' OR m.delivery_status = '待签收' OR m.delivery_status = '已签收待支付')
+            </if>
+            <if test="status != '所有状态'"> WHERE m.delivery_status = #{status}</if>
+        </if>
+        <if test="value != null">
+            <if test="status == '所有状态'">WHERE
+                (m.delivery_status = '待发货' OR m.delivery_status = '物流发单已创建' OR m.delivery_status = '待签收' OR m.delivery_status = '已签收待支付')
+            </if>
+            <if test="status != '所有状态'"> WHERE m.delivery_status = #{status}</if>
+            AND
+            (w.mord_id like CONCAT('%', #{value} ,'%')
+            or w.order_type like CONCAT('%', #{value} ,'%')
+            or m.delivery_no like CONCAT('%', #{value} ,'%')
+            or m.delivery_company like CONCAT('%', #{value} ,'%')
+            or c.client_name like CONCAT('%', #{value} ,'%'))
+        </if>
+        GROUP BY w.mord_id
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise> mord_id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="countDeliveryBySearch" resultType="Integer">
+        SELECT count(DISTINCT w.mord_id)
+            FROM orders as w
+            INNER JOIN client as c on w.client_id=c.client_id
+            LEFT JOIN sys_user as s on w.imported_staff=s.id
+            LEFT JOIN order_delivery as m on w.mord_id=m.order_mord_id
+        <if test="value == ''">
+            <if test="status == '所有状态'">WHERE
+                (m.delivery_status = '待发货' OR m.delivery_status = '物流发单已创建' OR m.delivery_status = '待签收' OR m.delivery_status = '已签收待支付')
+            </if>
+            <if test="status != '所有状态'"> WHERE m.delivery_status = #{status}</if>
+        </if>
+        <if test="value != ''">
+            <if test="status == '所有状态'">WHERE
+                (m.delivery_status = '待发货' OR m.delivery_status = '物流发单已创建' OR m.delivery_status = '待签收' OR m.delivery_status = '已签收待支付')
+            </if>
+            <if test="status != '所有状态'"> WHERE m.delivery_status = #{status}</if>
+            AND
+            (w.mord_id like CONCAT('%', #{value} ,'%')
+            or w.order_type like CONCAT('%', #{value} ,'%')
+            or m.delivery_no like CONCAT('%', #{value} ,'%')
+            or m.delivery_company like CONCAT('%', #{value} ,'%')
+            or c.client_name like CONCAT('%', #{value} ,'%'))
+        </if>
+    </select>
+    <!--    更新物流信息    -->
+    <update id="updateDelivery" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE order_delivery
+        SET
+            delivery_no = #{delivery_no},
+            delivery_company = #{delivery_company},
+            delivery_status = #{delivery_status},
+            create_time = #{create_time},
+            pickup_time = #{pickup_time},
+            pickup_time_required = #{pickup_time_required},
+            remark = #{remark}
+        WHERE  order_mord_id= #{order_mord_id}
+    </update>
+
+    <!--  创建初始物流订单，如在出库模块进行创建  -->
+    <insert id="addDeliveryOrder" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO order_delivery
+            (order_mord_id,  delivery_status)
+        VALUES
+            (#{order_mord_id},  #{delivery_status})
+    </insert>
+
+
+
+    <!-- 按状态搜索（待办事项）(author:bguan) -->
+    <select id="todoSearchByStatus" resultType="Integer">
+        SELECT count(0)
+        FROM order_delivery w
+        WHERE w.delivery_status = #{status}
+    </select>
+    <select id="todoSearchEventByStatus" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM order_delivery w
+        WHERE w.delivery_status = #{status}
+    </select>
+</mapper>

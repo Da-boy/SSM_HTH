@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.PositionDao">
+
+    <insert id="addPosition" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO position
+            (position_name, position_desc)
+        VALUES
+            (#{position_name}, #{position_desc} )
+    </insert>
+
+    <select id="countPosition" resultType="Integer">
+        SELECT count(0)
+        FROM position w
+    </select>
+
+    <select id="getPositionByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM position w
+        WHERE w.position_name = #{position_name}
+    </select>
+
+    <select id="listPosition" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.position_id                                     position_id,
+            w.position_name                                 position_name,
+            w.position_desc                                 position_desc,
+            date_format(w.create_time, '%Y.%m.%d %T')      createTime
+        FROM position w
+        ORDER BY w.position_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+<!--搜索+排序-->
+    <select id="listPositionBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.position_id                                   position_id,
+            w.position_name                                 position_name,
+            w.position_desc                                 position_desc,
+            date_format(w.create_time, '%Y.%m.%d %T')      createTime
+        FROM position w
+        <if test="value != ''">
+            WHERE w.position_name like CONCAT('%', #{value} ,'%')
+            or w.position_desc like CONCAT('%', #{value} ,'%')
+        </if>
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise> position_id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <select id="countPositionBySearch" resultType="Integer">
+        SELECT count(0)
+        FROM position w
+        <if test="value != ''">
+            WHERE w.position_name like CONCAT('%', #{value} ,'%')
+            or w.position_desc like CONCAT('%', #{value} ,'%')
+        </if>
+    </select>
+
+    <update id="updatePosition" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE position
+        SET
+            position_name = #{position_name},
+            position_desc = #{position_desc}
+        WHERE position_id = #{id}
+    </update>
+
+    <delete id="deletePosition" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE FROM position
+        WHERE position_id = #{position_id}
+    </delete>
+
+</mapper>

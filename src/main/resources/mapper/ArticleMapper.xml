@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.ArticleDao">
+
+    <update id="updateThemeColorByUserId" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE setting_global_config s
+        SET
+            s.global_color_theme = #{color}
+        WHERE s.global_user_id = #{userId}
+    </update>
+    <insert id="addThemeColorByUserId" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO setting_global_config s
+            (global_user_id,global_size,global_color_theme)
+        VALUES
+            (#{userId},#{size},#{#6959CD})
+    </insert>
+
+    <select id="getThemeColorByUserId" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM setting_global_config s
+        WHERE s.global_user_id = #{userId}
+    </select>
+
+    <select id="getAllArticle" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            *
+        FROM article
+    </select>
+
+    <insert id="addArticle" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO article
+            (content)
+        VALUES
+            (#{content})
+    </insert>
+
+    <select id="countArticle" resultType="Integer">
+        SELECT count(0)
+        FROM article w
+        WHERE w.delete_status = '1'
+    </select>
+
+
+    <select id="getArticleByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM article w
+        WHERE w.delete_status = '1' and w.content = #{content}
+    </select>
+
+
+    <select id="countArticleBySearch" resultType="Integer">
+        SELECT count(0)
+        FROM article w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+    </select>
+
+    <select id="listArticle" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM article w
+        WHERE w.delete_status = '1'
+        ORDER BY w.id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listArticleBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM article w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.id DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listArticleByContentHaveSearchAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM article w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.content asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listArticleByContentHaveSearchDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM article w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.content desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+
+
+    <select id="listArticleByOrderCreateTimeHaveSearchAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM article w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.create_time asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listArticleByOrderCreateTimeHaveSearchDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM article w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.create_time desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listArticleByOrderAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM article w
+        WHERE w.delete_status = '1'
+        ORDER BY w.content asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listArticleByContentDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM article w
+        WHERE w.delete_status = '1'
+        ORDER BY w.content desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listArticleByOrderCreateTimeAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM article w
+        WHERE w.delete_status = '1'
+        ORDER BY w.create_time asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listArticleByOrderCreateTimeDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM article w
+        WHERE w.delete_status = '1'
+        ORDER BY w.create_time desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+
+
+    <update id="updateArticle" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE article
+        SET
+            content = #{content}
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteArticle" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE article
+        SET
+            content = #{content},
+            delete_status = #{deleteStatus}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

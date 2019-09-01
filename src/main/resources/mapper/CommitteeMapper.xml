@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.CommitteeDao">
+
+    <insert id="addCommittee" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO committee
+            (committee_name,committee_desc)
+        VALUES
+            (#{committee_name},#{committee_desc})
+    </insert>
+
+    <select id="countCommittee" resultType="Integer">
+        SELECT count(0)
+        FROM committee w
+    </select>
+
+
+    <select id="getCommitteeByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM committee w
+        WHERE w.content = #{content}
+    </select>
+
+
+    <select id="countCommitteeBySearch" resultType="Integer">
+        SELECT count(0)
+        FROM committee w
+        <if test="value != ''">
+            WHERE w.committee_name like CONCAT('%', #{value} ,'%') or w.committee_desc like CONCAT('%', #{value} ,'%')
+        </if>
+    </select>
+
+    <select id="listCommittee" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.committee_id                            committee_id,
+            w.committee_name                          committee_name,
+            w.committee_desc                          committee_desc
+        FROM committee w
+        ORDER BY w.committee_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listCommitteeBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.committee_id                            committee_id,
+            w.committee_name                          committee_name,
+            w.committee_desc                          committee_desc
+        FROM committee w
+        <if test="value != ''">
+            WHERE w.committee_name like CONCAT('%', #{value} ,'%') or w.committee_desc like CONCAT('%', #{value} ,'%')
+        </if>
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise> committee_id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+
+    <update id="updateCommittee" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE committee
+        SET
+            committee_name = #{committee_name},
+            committee_desc = #{committee_desc}
+        WHERE committee_id = #{committee_id}
+    </update>
+
+    <delete id="deleteCommittee" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE FROM committee
+        WHERE committee_id = #{committee_id}
+    </delete>
+
+</mapper>

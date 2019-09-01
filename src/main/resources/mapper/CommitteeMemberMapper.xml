@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.CommitteeMemberDao">
+
+    <insert id="addCommitteeMember" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO commember
+            (member_name,member_org,is_staff,staff_id,is_chairman,certificate_id)
+        VALUES
+            (#{member_name},#{member_org},#{is_staff},#{staff_id},#{is_chairman},#{certificate_id})
+    </insert>
+
+    <select id="getCommitteeMemberIdByCertificateIdOrStaffId" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.committee_member_id                                           committee_member_id
+        FROM commember w
+        WHERE w.certificate_id = #{certificate_id}
+            OR  w.staff_id = #{staff_id}
+    </select>
+
+    <select id="countCommitteeMember" resultType="Integer">
+        SELECT count(0)
+        FROM commember w
+    </select>
+
+    <select id="listCommitteeMember" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.committee_member_id                                        committee_member_id,
+            w.is_staff                                                   is_staff,
+            w.staff_id                                                   staff_id,
+            w.is_chairman                                                is_chairman,
+            IF(w.is_staff = 1, u.username, w.member_name)                member_name,
+            IF(w.is_staff = 1, "苏州吉玛基因有限公司", w.member_org)     member_org,
+            IF(w.is_staff = 1, u.certificate_number, w.certificate_id)   certificate_id
+        FROM commember w
+            LEFT JOIN sys_user u ON w.staff_id = u.id AND w.is_staff = 1
+        ORDER BY w.committee_member_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="countCommitteeMemberByCommittee" resultType="Integer">
+        SELECT count(0)
+        FROM commember w
+            LEFT JOIN committee_member r ON w.committee_member_id = r.member_id
+        WHERE r.committee_id = #{committee_id}
+    </select>
+
+    <select id="countCommitteeMemberByCommitteeAndSearch" resultType="Integer">
+        SELECT count(0)
+        FROM commember w
+            LEFT JOIN sys_user u ON w.staff_id = u.id AND w.is_staff = 1
+            LEFT JOIN committee_member r ON w.committee_member_id = r.member_id
+        WHERE r.committee_id = #{committee_id}
+            AND (IF(w.is_staff = 1, u.username, w.member_name) LIKE CONCAT('%', #{value} ,'%')
+                OR  IF(w.is_staff = 1, "苏州吉玛基因有限公司", w.member_org) LIKE CONCAT('%', #{value} ,'%')
+                OR  IF(w.is_staff = 1, u.certificate_number, w.certificate_id) LIKE CONCAT('%', #{value} ,'%'))
+    </select>
+
+    <select id="listCommitteeMemberByCommittee" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.committee_member_id                                        committee_member_id,
+            IF(w.is_staff = 1, u.username, w.member_name)                member_name,
+            IF(w.is_staff = 1, "苏州吉玛基因有限公司", w.member_org)     member_org,
+            IF(w.is_staff = 1, u.certificate_number, w.certificate_id)   certificate_id
+        FROM commember w
+            LEFT JOIN sys_user u ON w.staff_id = u.id AND w.is_staff = 1
+            LEFT JOIN committee_member r ON w.committee_member_id = r.member_id
+        WHERE r.committee_id = #{committee_id}
+        ORDER BY w.committee_member_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listCommitteeMemberByCommitteeAndSearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.committee_member_id                                        committee_member_id,
+            IF(w.is_staff = 1, u.username, w.member_name)                member_name,
+            IF(w.is_staff = 1, "苏州吉玛基因有限公司", w.member_org)     member_org,
+            IF(w.is_staff = 1, u.certificate_number, w.certificate_id)   certificate_id
+        FROM commember w
+            LEFT JOIN sys_user u ON w.staff_id = u.id AND w.is_staff = 1
+            LEFT JOIN committee_member r ON w.committee_member_id = r.member_id
+        WHERE r.committee_id = #{committee_id}
+            AND (IF(w.is_staff = 1, u.username, w.member_name) LIKE CONCAT('%', #{value} ,'%')
+                OR  IF(w.is_staff = 1, "苏州吉玛基因有限公司", w.member_org) LIKE CONCAT('%', #{value} ,'%')
+                OR  IF(w.is_staff = 1, u.certificate_number, w.certificate_id) LIKE CONCAT('%', #{value} ,'%'))
+        ORDER BY w.committee_member_id DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+
+    <update id="updateCommitteeMember" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE committeeMember
+        SET
+            member_name = #{member_name},
+            member_org = #{member_org},
+            is_staff = #{is_staff},
+            staff_id = #{staff_id},
+            is_chairman = #{is_chairman},
+            certificate_id = #{certificate_id}
+        WHERE committee_member_id = #{committee_member_id}
+    </update>
+
+    <delete id="deleteCommitteeMember" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE FROM commember
+        WHERE committee_member_id = #{committee_member_id}
+    </delete>
+
+</mapper>

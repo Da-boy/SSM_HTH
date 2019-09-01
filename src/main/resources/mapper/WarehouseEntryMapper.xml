@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.WarehouseEntryDao">
+
+
+    <select id="countWarehouseEntry" resultType="Integer">
+        SELECT
+            count(*)
+        FROM warehouse_entry as w
+        LEFT JOIN  purchase_order p ON w.purchasing_son_id = p.purchase_son_order_id
+        LEFT JOIN  orders o ON w.saleing_son_order_id = o.order_id
+        LEFT JOIN  dim_sc_item d ON d.sc_item_id = w.goods_id
+        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+        LEFT JOIN department dept ON dept.department_id = w.application_dept_id
+    </select>
+
+
+    <select id="listWarehouseEntry" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.warehousing_mord_id           warehousing_mord_id,
+            w.warehousing_son_order_id      warehousing_son_order_id,
+            w.purchasing_son_id             purchasing_son_id,
+            w.product_order_id              product_order_id,
+            w.saleing_mord_id               saleing_mord_id,
+            w.saleing_son_order_id          saleing_son_order_id,
+            w.warehousing_type              warehousing_type,
+            w.warehousing_status            warehousing_status,
+            w.goods_id                       goods_id,
+            d.sc_item_name                  sc_item_name,
+            w.unit                      unit,
+            w.storage_put_num_ought           storage_put_num_ought,
+            w.storage_put_num                       storage_put_num,
+            w.guarantee_period                    guarantee_period,
+             DATE_FORMAT(w.product_time, '%Y-%m-%d %T') product_time,
+             DATE_FORMAT(w.create_time, '%Y-%m-%d %T') create_time,
+             DATE_FORMAT(w.check_time, '%Y-%m-%d %T') check_time,
+             DATE_FORMAT(w.warehousing_time, '%Y-%m-%d %T') warehousing_time,
+            w.is_check_passing                            is_check_passing,
+            w.check_mark_info                                 check_mark_info,
+            w.mark                                          mark,
+            w.application_dept_id                   applier_dept_id,
+            w.application_staff_id                  applier_staff_id,
+            u.staff_name_en                         staff_name_en,
+            dept.department_name                    department_name
+        FROM warehouse_entry as w
+        LEFT JOIN  purchase_order p ON w.purchasing_son_id = p.purchase_son_order_id
+        LEFT JOIN  orders o ON w.saleing_son_order_id = o.order_id
+        LEFT JOIN  dim_sc_item d ON d.sc_item_id = w.goods_id
+        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+        LEFT JOIN department dept ON dept.department_id = w.application_dept_id
+        ORDER BY w.warehousing_mord_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <!-- 全文模糊检索 -->
+    <select id="listWarehouseEntryBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.warehousing_mord_id                   warehousing_mord_id,
+            w.warehousing_son_order_id              warehousing_son_order_id,
+            w.purchasing_son_id                     purchasing_son_id,
+            w.product_order_id                      product_order_id,
+            w.saleing_mord_id                       saleing_mord_id,
+            w.saleing_son_order_id                  saleing_son_order_id,
+            w.warehousing_type                      warehousing_type,
+            w.warehousing_status                    warehousing_status,
+            w.goods_id                              goods_id,
+            d.sc_item_name                          sc_item_name,
+            w.unit                                  unit,
+            w.storage_put_num_ought                 storage_put_num_ought,
+            w.storage_put_num                       storage_put_num,
+            w.guarantee_period                      guarantee_period,
+             DATE_FORMAT(w.product_time, '%Y-%m-%d %T')     product_time,
+             DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,
+             DATE_FORMAT(w.check_time, '%Y-%m-%d %T')       check_time,
+             DATE_FORMAT(w.warehousing_time, '%Y-%m-%d %T') warehousing_time,
+            w.is_check_passing                      is_check_passing,
+            w.check_mark_info                       check_mark_info,
+            w.mark                                  mark,
+            w.application_dept_id                   applier_dept_id,
+            w.application_staff_id                  applier_staff_id,
+            u.staff_name_en                         staff_name_en,
+            dept.department_name                    department_name
+        FROM warehouse_entry as w
+        LEFT JOIN  purchase_order p ON w.purchasing_son_id = p.purchase_son_order_id
+        LEFT JOIN  orders o ON w.saleing_son_order_id = o.order_id
+        LEFT JOIN  dim_sc_item d ON d.sc_item_id = w.goods_id
+        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+        LEFT JOIN department dept ON dept.department_id = w.application_dept_id
+        WHERE
+            <if test="status!='所有状态'">
+                w.warehousing_status = #{status} AND
+            </if>
+            (w.warehousing_type like CONCAT('%', #{value} ,'%')
+            or w.warehousing_son_order_id like CONCAT('%', #{value} ,'%')
+            or w.warehousing_status like CONCAT('%', #{value} ,'%')
+            or d.sc_item_name like CONCAT('%', #{value} ,'%')
+            or dept.department_name like CONCAT('%', #{value} ,'%')
+            or u.staff_name_en like CONCAT('%', #{value} ,'%'))
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise> w.warehousing_mord_id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <select id="countWarehouseEntryBySearch" resultType="Integer">
+        SELECT count(0)
+        FROM warehouse_entry as w
+        LEFT JOIN  purchase_order p ON w.purchasing_son_id = p.purchase_son_order_id
+        LEFT JOIN  orders o ON w.saleing_son_order_id = o.order_id
+        LEFT JOIN  dim_sc_item d ON d.sc_item_id = w.goods_id
+        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+        LEFT JOIN department dept ON dept.department_id = w.application_dept_id
+        WHERE
+            <if test="status!='所有状态'">
+                w.warehousing_status = #{status} AND
+            </if>
+            (w.warehousing_type like CONCAT('%', #{value} ,'%')
+            or w.warehousing_son_order_id like CONCAT('%', #{value} ,'%')
+            or w.warehousing_status like CONCAT('%', #{value} ,'%')
+            or d.sc_item_name like CONCAT('%', #{value} ,'%')
+            or dept.department_name like CONCAT('%', #{value} ,'%')
+            or u.staff_name_en like CONCAT('%', #{value} ,'%'))
+    </select>
+
+
+
+    <update id="updateWarehouseEntry" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE warehouse_entry
+        SET
+          <if test="value == 1">
+              warehousing_status = '已入库',
+              is_check_passing = '通过',
+          </if>
+        <if test="value == 2">
+            warehousing_status = '入库取消',
+            is_check_passing = '不通过',
+        </if>
+        check_mark_info = #{area}
+        WHERE warehousing_son_order_id = #{warehousing_son_order_id}
+    </update>
+
+    <update id="updateWarehouseEntry2" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE warehouse_entry
+        SET
+            warehousing_status = #{warehousing_status},
+            check_mark_info = #{message}
+        WHERE warehousing_son_order_id = #{warehousing_son_order_id}
+    </update>
+
+
+    <select id="isToday" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            *
+        FROM inventory as i
+        WHERE i.sc_item_id = #{goods_id}
+        order by i.inventory_date desc
+    </select>
+
+
+    <select id="getWarehouseEnd" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            *
+        FROM inventory as i
+        WHERE i.sc_item_id = #{goods_id}
+        order by i.inventory_date desc
+        limit 1
+    </select>
+
+
+    <insert id="insertInventory" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO inventory
+            (sc_item_id, warehouse_id, begin_stock_good, begin_stock_bad, end_stock_good,end_stock_bad,transportation_inventory,outgoing_vol,warehousing_vol)
+        VALUES
+            (#{sc_item_id}, #{warehouse_id}, #{begin_stock_good}, #{begin_stock_bad}, #{end_stock_good},#{end_stock_bad},#{transportation_inventory},#{outgoing_vol},#{warehousing_vol})
+    </insert>
+
+
+    <select id="getIncentoryByTime" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            *
+        FROM inventory as i
+        WHERE i.sc_item_id = #{goods_id} and i.inventory_date = #{inventory_date}
+        order by i.inventory_date asc
+    </select>
+
+
+    <insert id="insertInventoryOfNull" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO inventory
+            (sc_item_id,  begin_stock_good, begin_stock_bad, end_stock_good,end_stock_bad,transportation_inventory,outgoing_vol,warehousing_vol)
+        VALUES
+            (#{goods_id},  #{storage_put_num}, 0, #{storage_put_num},0,0,0, #{storage_put_num})
+    </insert>
+    <update id="updateOrderStatus" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE orders
+        SET
+            order_status = #{warehousing_status}
+        WHERE mord_id = #{saleing_mord_id}
+    </update>
+
+    <update id="updateInventory" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE inventory
+        SET
+            end_stock_good = #{end_stock_good},warehousing_vol = #{warehousing_vol}
+        WHERE inventory = #{inventory}
+    </update>
+
+    <!-- 按状态搜索（待办事项）(author:bguan) -->
+    <select id="todoSearchByStatus" resultType="Integer">
+        SELECT count(0)
+        FROM warehouse_entry w
+        WHERE w.warehousing_status = #{status}
+    </select>
+    <select id="todoSearchEventByStatus" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM warehouse_entry w
+        WHERE w.warehousing_status = #{status}
+    </select>
+
+    <!-- 更新订单状态(对子订单操作)(未使用) -->
+    <update id="changeOrderStatus" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE warehouse_entry
+        SET
+            warehousing_status = #{warehousing_status}
+        WHERE warehousing_son_order_id = #{warehousing_son_order_id}
+    </update>
+    <update id="changeOrderStatusMessage" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE warehouse_entry
+        SET
+            check_mark_info = #{message}
+        WHERE warehousing_son_order_id = #{warehousing_son_order_id} and warehousing_status = "待审批"
+    </update>
+
+    <!--    按列排序-->
+    <select id="listWarehouseEntryBySort" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+        w.warehousing_mord_id                   warehousing_mord_id,
+        w.warehousing_son_order_id              warehousing_son_order_id,
+        w.purchasing_son_id                     purchasing_son_id,
+        w.product_order_id                      product_order_id,
+        w.saleing_mord_id                       saleing_mord_id,
+        w.saleing_son_order_id                  saleing_son_order_id,
+        w.warehousing_type                      warehousing_type,
+        w.warehousing_status                    warehousing_status,
+        w.goods_id                              goods_id,
+        d.sc_item_name                          sc_item_name,
+        w.unit                                  unit,
+        w.storage_put_num_ought                 storage_put_num_ought,
+        w.storage_put_num                       storage_put_num,
+        w.guarantee_period                      guarantee_period,
+        DATE_FORMAT(w.product_time, '%Y-%m-%d %T')     product_time,
+        DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,
+        DATE_FORMAT(w.check_time, '%Y-%m-%d %T')       check_time,
+        DATE_FORMAT(w.warehousing_time, '%Y-%m-%d %T') warehousing_time,
+        w.is_check_passing                      is_check_passing,
+        w.check_mark_info                       check_mark_info,
+        w.mark                                  mark,
+        w.application_dept_id                   applier_dept_id,
+        w.application_staff_id                  applier_staff_id,
+        u.staff_name_en                         staff_name_en,
+        dept.department_name                    department_name
+        FROM warehouse_entry as w
+        LEFT JOIN  purchase_order p ON w.purchasing_son_id = p.purchase_son_order_id
+        LEFT JOIN  orders o ON w.saleing_son_order_id = o.order_id
+        LEFT JOIN  dim_sc_item d ON d.sc_item_id = w.goods_id
+        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+        LEFT JOIN department dept ON dept.department_id = w.application_dept_id
+        <if test="status!='所有状态' or value!=''">
+            WHERE
+            <if test="status!='所有状态'">
+                w.warehousing_status = #{status}
+            </if>
+            <if test="status!='所有状态' and value!=''"> AND </if>
+            <if test="value!=''">
+                (w.warehousing_type like CONCAT('%', #{value} ,'%')
+                or w.warehousing_son_order_id like CONCAT('%', #{value} ,'%')
+                or w.warehousing_status like CONCAT('%', #{value} ,'%')
+                or d.sc_item_name like CONCAT('%', #{value} ,'%')
+                or dept.department_name like CONCAT('%', #{value} ,'%')
+                or u.staff_name_en like CONCAT('%', #{value} ,'%'))
+            </if>
+        </if>
+        ORDER BY
+        <choose>
+            <when test="prop!=''">
+                ${prop}
+            </when>
+            <otherwise> w.warehousing_mord_id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="countWarehouseEntryBySort" resultType="Integer">
+        SELECT count(0)
+        FROM warehouse_entry as w
+        LEFT JOIN  purchase_order p ON w.purchasing_son_id = p.purchase_son_order_id
+        LEFT JOIN  orders o ON w.saleing_son_order_id = o.order_id
+        LEFT JOIN  dim_sc_item d ON d.sc_item_id = w.goods_id
+        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+        LEFT JOIN department dept ON dept.department_id = w.application_dept_id
+
+        <if test="status!='所有状态' or value!=''">
+            WHERE
+            <if test="status!='所有状态'">
+                w.warehousing_status = #{status}
+            </if>
+            <if test="status!='所有状态' and value!=''"> AND </if>
+            <if test="value!=''">
+                (w.warehousing_type like CONCAT('%', #{value} ,'%')
+                or w.warehousing_son_order_id like CONCAT('%', #{value} ,'%')
+                or w.warehousing_status like CONCAT('%', #{value} ,'%')
+                or d.sc_item_name like CONCAT('%', #{value} ,'%')
+                or dept.department_name like CONCAT('%', #{value} ,'%')
+                or u.staff_name_en like CONCAT('%', #{value} ,'%'))
+            </if>
+        </if>
+    </select>
+    <update id="deleteWarehouseById" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE FROM warehouse_entry
+        WHERE warehousing_son_order_id  = #{warehousing_son_order_id}
+    </update>
+</mapper>

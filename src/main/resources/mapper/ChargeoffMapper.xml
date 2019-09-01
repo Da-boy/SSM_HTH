@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.ChargeoffDao">
+    <!-- 按状态搜索（待办事项）(author:bguan) -->
+    <select id="todoSearchByStatus_bak" resultType="Integer">
+        SELECT count(DISTINCT w.order_mord_id)
+        FROM chargeoff_order w
+        WHERE w.order_mord_status = #{status}
+    </select>
+    <select id="todoSearchByStatus" resultType="Integer">
+        SELECT count(DISTINCT w.mord_id)
+        FROM orders as w
+        inner join client as c on w.client_id=c.client_id
+        LEFT JOIN chargeoff_order as g ON g.order_mord_id = w.order_id
+        WHERE order_mord_status = #{status}
+    </select>
+    <select id="todoSearchEventByStatus" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM chargeoff_order w
+        WHERE w.order_mord_status = #{status}
+    </select>
+
+    <!--  新增催账销账单，物流模块签收后调用  -->
+    <insert id="addOrderBill" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO chargeoff_order
+            (order_mord_id,  order_mord_status)
+        VALUES
+            (#{order_mord_id},  #{orderbill_status})
+    </insert>
+
+
+    <!-- 销账操作 -->
+    <select id="countChargeoffRecord" resultType="Integer">
+        SELECT count(0)
+        FROM chargeoff_order w
+        WHERE w.order_mord_id = #{mord_id}
+    </select>
+
+    <insert id="addChargeoffRecord" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO chargeoff_order
+            (chargeoff_mount, order_mord_id, order_mord_status, update_time)
+        VALUES
+            (#{sum}, #{mord_id}, #{status}, #{updatetime})
+    </insert>
+
+    <update id="updateChargeoffRecord" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE chargeoff_order w
+        SET
+            chargeoff_mount = #{sum},
+            order_mord_status = #{status},
+            update_time = #{updatetime}
+        WHERE w.order_mord_id = #{mord_id}
+    </update>
+    <update id="updateAdvancePayment" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE client c
+        SET
+            advance_payment = #{advance_payment}
+        WHERE c.client_id = #{client_id}
+    </update>
+
+
+    <select id="listChargeoffRecord" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                                id,
+            w.chargeoff_mount                                   chargeoff_mount,
+            w.order_mord_id                                     order_mord_id,
+            w.order_mord_status                                 order_mord_status,
+            date_format(w.create_time, '%Y-%m-%d %T')           create_time,
+            date_format(w.update_time, '%Y-%m-%d %T')           update_time
+        FROM chargeoff_order w
+        ORDER BY w.id DESC
+    </select>
+
+    <!--以下为销账催账操作-->
+    <!--销账催账：仅列出账单状态的父订单：["已签收待支付","部分支付","已支付"]-->
+    <select id="countBillOrder2" resultType="Integer">
+         SELECT count(DISTINCT mord_id) FROM orders WHERE order_status = '已签收待支付' OR order_status = '部分支付' OR order_status = '已支付'
+    </select>
+    <select id="countBillOrder" resultType="Integer">
+        SELECT count(DISTINCT w.mord_id)
+        FROM orders as w
+        inner join client as c on w.client_id=c.client_id
+        LEFT JOIN chargeoff_order as g ON g.order_mord_id = w.order_id
+        WHERE order_mord_status = '已签收待支付' OR order_mord_status = '部分支付' OR order_mord_status = '已支付'
+    </select>
+    <select id="listBillOrder" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.mord_id                                       mord_id,
+            w.order_id                                      order_id,
+            w.order_status                                  order_status,
+            w.order_type                                    order_type,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')    delivery_time,
+            c.client_id                                     client_id,
+            c.client_name                                   client_name,
+            c.manager_name                                  manager_name,
+            c.client_affiliation                            client_affiliation,
+            c.shipping_address                              shipping_address,
+            c.advance_payment                               advance_payment,
+            c.in_blacklist                                  in_blacklist,
+            w.invoice_title                                 invoice_title,
+            w.form_of_invoice                               form_of_invoice,
+            c.telephone                                     telephone,
+            c.client_phone                                  client_phone,
+            c.client_email                                  client_email,
+            w.notification_of_delivery                      notification_of_delivery,
+            w.order_status                                 orderStatus,
+            w.order_type                                   orderType,
+            DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      createTime,
+            DATE_FORMAT(w.pay_time, '%Y-%m-%d %T')          payTime,
+            DATE_FORMAT(w.cancel_time, '%Y-%m-%d %T')          cancelTime,
+            DATE_FORMAT(w.refund_time, '%Y-%m-%d %T')          refundTime,
+            DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')          deliveryTime,
+            DATE_FORMAT(w.design_time, '%Y-%m-%d %T')          designTime,
+            DATE_FORMAT(w.production_time, '%Y-%m-%d %T')          productionTime,
+            DATE_FORMAT(w.stock_time, '%Y-%m-%d %T')          stockTime,
+            DATE_FORMAT(w.payed_time, '%Y-%m-%d %T')          payedTime,
+            w.gene_name                                       geneName,
+            w.specifications                                  specifications,
+            w.div_tubes_number                                divTubesNumber,
+            w.sense_53                                        sense_53,
+            w.antisense_53                                    antisense_53,
+            w.chemical_modification                           chemicalModification,
+            w.special_modi                                    specialModi,
+            w.flu_labeling                                    fluLabeling,
+            w.special_instructions                            specialInstructions,
+            w.sc_item_id                                      sc_item_id,
+            w.item_numbers                                   item_numbers,
+            w.item_unit                                       item_unit,
+            w.order_people                                    order_people,
+            w.sales_manager_id                                sales_manager_id,
+            g.chargeoff_mount                                 chargeoff_mount,
+            g.order_mord_status                               order_mord_status,
+            DATE_FORMAT(g.create_time, '%Y-%m-%d %T')         create_time,
+            w.order_price                                     order_price
+        FROM orders as w
+        inner join client as c on w.client_id=c.client_id
+        LEFT JOIN chargeoff_order as g ON g.order_mord_id = w.order_id
+        WHERE order_mord_status = '已签收待支付' OR order_mord_status = '部分支付' OR order_mord_status = '已支付'
+        GROUP BY w.mord_id
+        ORDER BY w.mord_id
+         DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <!-- 搜索与排序-->
+    <select id="countBillOrderBySearch" resultType="Integer">
+        SELECT count(DISTINCT w.mord_id)
+        FROM orders as w
+        inner join client as c on w.client_id=c.client_id
+        LEFT JOIN chargeoff_order as g ON g.order_mord_id = w.order_id
+        <if test="value == ''">
+            <if test="status == '所有状态'">WHERE
+                (order_mord_status = '已签收待支付' OR order_mord_status = '部分支付' OR order_mord_status = '已支付')
+            </if>
+            <if test="status != '所有状态'"> WHERE order_mord_status = #{status}</if>
+        </if>
+        <if test="value != ''">
+            <if test="status == '所有状态'">WHERE
+                (order_mord_status = '已签收待支付' OR order_mord_status = '部分支付' OR order_mord_status = '已支付')
+            </if>
+            <if test="status != '所有状态'"> WHERE order_mord_status = #{status}</if>
+            AND
+            (c.client_name like CONCAT('%', #{value} ,'%')
+            or c.manager_name like CONCAT('%', #{value} ,'%')
+            or c.client_affiliation like CONCAT('%', #{value} ,'%')
+            or c.shipping_address like CONCAT('%', #{value} ,'%')
+            or w.invoice_title like CONCAT('%', #{value} ,'%')
+            or c.telephone like CONCAT('%', #{value} ,'%')
+            or c.client_phone like CONCAT('%', #{value} ,'%')
+            or c.client_email like CONCAT('%', #{value} ,'%')
+            or w.order_type like CONCAT('%', #{value} ,'%')
+            or w.gene_name like CONCAT('%', #{value} ,'%')
+            or w.gene_name like CONCAT('%', #{value} ,'%')
+            or w.specifications like CONCAT('%', #{value} ,'%')
+            or w.order_status like CONCAT('%', #{value} ,'%'))
+        </if>
+    </select>
+    <select id="listBillOrderBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+        w.mord_id                                       mord_id,
+        w.order_id                                      order_id,
+        w.order_status                                  order_status,
+        DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      create_time,
+        DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')    delivery_time,
+        c.client_id                                     client_id,
+        c.client_name                                   client_name,
+        c.manager_name                                  manager_name,
+        c.client_affiliation                            client_affiliation,
+        c.shipping_address                              shipping_address,
+        c.advance_payment                               advance_payment,
+        c.in_blacklist                                  in_blacklist,
+        w.invoice_title                                 invoice_title,
+        w.form_of_invoice                               form_of_invoice,
+        c.telephone                                     telephone,
+        c.client_phone                                  client_phone,
+        c.client_email                                  client_email,
+        w.notification_of_delivery                      notification_of_delivery,
+        w.order_status                                 orderStatus,
+        w.order_type                                   orderType,
+        DATE_FORMAT(w.create_time, '%Y-%m-%d %T')      createTime,
+        DATE_FORMAT(w.pay_time, '%Y-%m-%d %T')          payTime,
+        DATE_FORMAT(w.cancel_time, '%Y-%m-%d %T')          cancelTime,
+        DATE_FORMAT(w.refund_time, '%Y-%m-%d %T')          refundTime,
+        DATE_FORMAT(w.delivery_time, '%Y-%m-%d %T')          deliveryTime,
+        DATE_FORMAT(w.design_time, '%Y-%m-%d %T')          designTime,
+        DATE_FORMAT(w.production_time, '%Y-%m-%d %T')          productionTime,
+        DATE_FORMAT(w.stock_time, '%Y-%m-%d %T')          stockTime,
+        DATE_FORMAT(w.payed_time, '%Y-%m-%d %T')          payedTime,
+        w.gene_name                                       geneName,
+        w.specifications                                  specifications,
+        w.div_tubes_number                                divTubesNumber,
+        w.sense_53                                        sense_53,
+        w.antisense_53                                    antisense_53,
+        w.chemical_modification                           chemicalModification,
+        w.special_modi                                    specialModi,
+        w.flu_labeling                                    fluLabeling,
+        w.special_instructions                            specialInstructions,
+        w.sc_item_id                                      sc_item_id,
+        w.item_numbers                                   item_numbers,
+        w.item_unit                                       item_unit,
+        w.order_people                                    order_people,
+        w.sales_manager_id                                sales_manager_id,
+        g.chargeoff_mount                                 chargeoff_mount,
+        g.order_mord_status                               order_mord_status,
+        DATE_FORMAT(g.create_time, '%Y-%m-%d %T')         create_time,
+        w.order_price                                     order_price
+        FROM orders as w
+        inner join client as c on w.client_id=c.client_id
+        LEFT JOIN chargeoff_order as g ON g.order_mord_id = w.order_id
+        <if test="value == ''">
+            <if test="status == '所有状态'">WHERE
+                (order_mord_status = '已签收待支付' OR order_mord_status = '部分支付' OR order_mord_status = '已支付')
+            </if>
+            <if test="status != '所有状态'"> WHERE order_mord_status = #{status}</if>
+        </if>
+        <if test="value != ''">
+            <if test="status == '所有状态'">WHERE
+                (order_mord_status = '已签收待支付' OR order_mord_status = '部分支付' OR order_mord_status = '已支付')
+            </if>
+            <if test="status != '所有状态'"> WHERE order_mord_status = #{status}</if>
+            AND
+            (c.client_name like CONCAT('%', #{value} ,'%')
+            or c.manager_name like CONCAT('%', #{value} ,'%')
+            or c.client_affiliation like CONCAT('%', #{value} ,'%')
+            or c.shipping_address like CONCAT('%', #{value} ,'%')
+            or w.invoice_title like CONCAT('%', #{value} ,'%')
+            or c.telephone like CONCAT('%', #{value} ,'%')
+            or c.client_phone like CONCAT('%', #{value} ,'%')
+            or c.client_email like CONCAT('%', #{value} ,'%')
+            or w.order_type like CONCAT('%', #{value} ,'%')
+            or w.gene_name like CONCAT('%', #{value} ,'%')
+            or w.gene_name like CONCAT('%', #{value} ,'%')
+            or w.specifications like CONCAT('%', #{value} ,'%')
+            or w.order_status like CONCAT('%', #{value} ,'%'))
+        </if>
+        GROUP BY w.mord_id
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise> mord_id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <!--  催账记录  -->
+    <insert id="logUigeBillRecord" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO urge_bill
+            (saling_mord_id, urge_time, from_staff_id, to_staff_id, urge_reason, urge_action, status, from_email)
+        VALUES
+            (#{salingMordId}, #{noteTime}, #{fromStaffId}, #{toStaffId}, #{urgeReason}, #{urgeAction}, #{status1}, #{fromEmail})
+    </insert>
+
+    <!-- 添加客户到黑名单/移除客户从黑名单 -->
+    <update id="updateClientBlackList" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE client c
+        SET
+            in_blacklist = #{in_blacklist}
+        WHERE c.client_id = #{client_id}
+    </update>
+    <!--  获取黑名单所有客户  -->
+    <select id="listClientBlackList" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM client w
+        WHERE w.in_blacklist = 1
+        ORDER BY w.id DESC
+    </select>
+</mapper>

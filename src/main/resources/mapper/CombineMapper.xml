@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.CombineDao">
+
+
+    <!--<select id="getAllCombine" resultType="com.alibaba.fastjson.JSONObject">-->
+    <!--SELECT-->
+    <!--*-->
+    <!--FROM purchase_order-->
+    <!--</select>-->
+
+
+<!--    <insert id="addCombine" parameterType="com.alibaba.fastjson.JSONObject">-->
+<!--        INSERT INTO order_composite-->
+<!--        (batch_id, saling_mord_id, saling_son_id, product_son_id, `status`,create_time,create_staff)-->
+<!--        VALUES-->
+<!--            (#{batch_id}, #{saling_mord_id}, #{saling_son_id}, #{product_son_id}, #{status},-->
+<!--             #{create_time}, #{create_staff})-->
+<!--    </insert>-->
+    <insert id="addCombine" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO order_composite
+        (batch_id, saling_mord_id, saling_son_id, product_son_id, `status`,create_time,create_staff)
+        VALUES
+        <foreach collection="array" separator="," item="item">
+            (#{item.batch_id}, #{item.saling_mord_id}, #{item.saling_son_id}, #{item.product_son_id}, #{item.status},
+            #{item.create_time}, #{item.create_staff})
+        </foreach>
+    </insert>
+    <select id="countCombine" resultType="Integer">
+        SELECT count(0)
+        FROM order_composite w
+        --         WHERE w.purchase_status != '采购取消'
+    </select>
+
+    <select id="listCombine" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id,
+            w.batch_id,
+            w.saling_mord_id,
+            w.saling_son_id,
+            w.product_son_id,
+            w.`status`,
+            date_format(w.create_time, '%Y-%m-%d %T')       create_time,
+            w.create_staff,
+            w.shuru_status,
+            date_format(w.shuru_time, '%Y-%m-%d %T')        shuru_time,
+            w.shuru_staff,
+            w.jiaodui_status,
+            date_format(w.jiaodui_time, '%Y-%m-%d %T')      jiaodui_time,
+            w.jiaodui_staff,
+            w.hecheng_status,
+            date_format(w.hecheng_time, '%Y-%m-%d %T')      hecheng_time,
+            w.hecheng_staff,
+            w.anjie_status,
+            date_format(w.anjie_time, '%Y-%m-%d %T')        anjie_time,
+            w.anjie_staff,
+            w.donggan_status,
+            date_format(w.donggan_time, '%Y-%m-%d %T')      donggan_time,
+            w.donggan_staff,
+            w.chendian_status,
+            date_format(w.chendian_time, '%Y-%m-%d %T')     chendian_time,
+            w.chendian_staff,
+            w.zajiao_status,
+            date_format(w.zajiao_time, '%Y-%m-%d %T')       zajiao_time,
+            w.zajiao_staff,
+            w.hplc_status,
+            date_format(w.hplc_time, '%Y-%m-%d %T')         hplc_time,
+            w.hplc_staff,
+            w.dingliang_status,
+            date_format(w.dingliang_time, '%Y-%m-%d %T')    dingliang_time,
+            w.dingliang_staff,
+            w.dingliang_quantity                            dingliang_quantity,
+            w.zhijian_status                                zhijian_status,
+            date_format(w.zhijian_time, '%Y-%m-%d %T')      zhijian_time,
+            w.zhijian_staff                                 zhijian_staff,
+            w.zhijian_result                                zhijian_result,
+            w.mark                                          mark,
+
+            o.order_status                                  order_status,
+            o.mord_id                                       mord_id,
+            c.client_name                                   client_name,
+            DATE_FORMAT(o.create_time, '%Y.%m.%d %T')       mord_create_time,
+            DATE_FORMAT(o.delivery_time, '%Y.%m.%d %T')     delivery_time,
+
+            u.nickname  create_staff_name ,
+            u1.nickname  shuru_staff_name ,
+            u2.nickname  jiaodui_staff_name ,
+            u3.nickname  hecheng_staff_name ,
+            u4.nickname  anjie_staff_name ,
+            u5.nickname  donggan_staff_name ,
+            u6.nickname  zajiao_staff_name ,
+            u7.nickname  hplc_staff_name ,
+            u8.nickname  dingliang_staff_name ,
+            u9.nickname  zhijian_staff_name,
+            u10.nickname  chendian_staff_name
+        FROM order_composite w
+            LEFT JOIN orders o ON w.saling_son_id = o.order_id
+            LEFT JOIN client c ON o.client_id = c.client_id
+
+
+            LEFT JOIN sys_user u ON w.create_staff = u.id
+            LEFT JOIN sys_user u1 ON w.shuru_staff = u1.id
+            LEFT JOIN sys_user u2 ON w.jiaodui_staff = u2.id
+            LEFT JOIN sys_user u3 ON w.hecheng_staff = u3.id
+            LEFT JOIN sys_user u4 ON w.anjie_staff = u4.id
+            LEFT JOIN sys_user u5 ON w.donggan_staff = u5.id
+            LEFT JOIN sys_user u6 ON w.zajiao_staff = u6.id
+            LEFT JOIN sys_user u7 ON w.hplc_staff = u7.id
+            LEFT JOIN sys_user u8 ON w.dingliang_staff = u8.id
+            LEFT JOIN sys_user u9 ON w.zhijian_staff = u9.id
+            LEFT JOIN sys_user u10 ON w.chendian_staff = u10.id
+        ORDER BY w.id
+            DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <delete id="deleteCombine" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE FROM order_composite
+        WHERE id = #{id}
+    </delete>
+
+
+    <update id="auditCombine" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE order_composite
+        SET
+            status          = #{status}, create_time = #{create_time},
+            create_staff    = #{create_staff},
+            shuru_time      = #{shuru_time},
+            shuru_staff     = #{shuru_staff},
+            jiaodui_time    = #{jiaodui_time},
+            jiaodui_staff   = #{jiaodui_staff},
+            hecheng_time    = #{hecheng_time},
+            hecheng_staff   = #{hecheng_staff},
+            anjie_staff     = #{anjie_staff},
+            anjie_time      = #{anjie_time},
+            create_time     = #{create_time},
+            donggan_staff   = #{donggan_staff},
+            donggan_time    = #{donggan_time},
+            chendian_staff  = #{chendian_staff},
+            chendian_time   = #{chendian_time},
+            zajiao_staff    = #{zajiao_staff},
+            zajiao_time     = #{zajiao_time},
+            hplc_staff      = #{hplc_staff},
+            hplc_time       = #{hplc_time},
+            dingliang_staff = #{dingliang_staff},
+            dingliang_time  = #{dingliang_time},
+            dingliang_quantity = #{dingliang_quantity},
+            zhijian_time    = #{zhijian_time},
+            zhijian_staff   = #{zhijian_staff},
+            zhijian_result  = #{zhijian_result},
+            mark            = #{mark}
+        WHERE id = #{id}
+    </update>
+
+    <select id="getCombineBatchId" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT id, batch_id
+        from order_composite
+        ORDER BY id DESC
+        LIMIT 1
+        --         WHERE w.purchase_status != '采购取消'
+    </select>
+    <!--  WHERE w.purchase_status != '采购取消'-->
+
+    <!--  更新采购订单（父订单）-->
+    <update id="updateCombineParent" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE purchase_order
+        SET
+            application_dept_id  = #{department_id},
+            application_staff_id = #{staff_id},
+            supplier_id          = #{company_id},
+            application_time     = #{order_time_tmp},
+            application_id       = #{apply_id},
+            contacts_person      = #{supplier_contact},
+            require_goods_time   = #{required_time_tmp}
+        WHERE purchase_mord_id = #{purchase_parent_id}
+    </update>
+    <!--  更新采购订单(子订单)-->
+    <update id="updateCombine" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE purchase_order
+        SET
+            goods_id              = #{product_id},
+            storage_put_num_ought = #{quantity},
+            storage_put_num       = #{quantity},
+            unit                  = #{unit},
+            unit_price            = #{unit_price},
+            sum_price             = #{total_price},
+            mark                  = #{remark}
+        WHERE purchase_son_order_id = #{purchase_id}
+    </update>
+
+
+    <!-- 更新订单状态(对子订单操作) -->
+    <update id="changeOrderStatus" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE purchase_order
+        SET
+            purchase_status = #{purchaseStatus}
+        WHERE purchase_son_order_id = #{purchaseSubId}
+    </update>
+    <update id="changeOrderStatusMessage" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE purchase_order
+        SET
+            checking_mark_info = #{message}
+        WHERE purchase_son_order_id = #{purchaseSubId} and purchase_status = "待审核"
+    </update>
+
+    <!-- 采购订单入库 -->
+    <insert id="addWarehouseEntry" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO warehouse_entry
+        (warehousing_mord_id, warehousing_son_order_id, warehousing_type, warehousing_status, purchasing_son_id, goods_id, unit, storage_put_num_ought,
+         storage_put_num, guarantee_period, create_time, application_staff_id, application_dept_id)
+        VALUES
+            (#{warehousingParentId}, #{warehousingSonId}, #{warehousingType}, #{warehousingStatus}, #{purchaseSonId},
+                                     #{goodsId}, #{unit}, #{storagePutNumOught},
+                                     #{storagePutNum}, #{guaranteePeriod}, #{createTime}, #{applicationStaffId},
+             #{applicationDeptId})
+    </insert>
+
+    <!-- 获取所有父订单下的所有子订单 -->
+    <select id="getCombineSonOrderByParentId" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.purchase_son_order_id purchaseSonId,
+            w.goods_id              goodsId,
+            w.unit                  unit,
+            w.storage_put_num_ought shouldCombine,
+            w.storage_put_num       realCombine
+        FROM purchase_order w
+        WHERE purchase_mord_id = #{purchaseId}
+    </select>
+
+
+    <select id="getCombineByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM purchase_order w
+        WHERE w.delete_status = '1' and w.content = #{content}
+    </select>
+
+
+    <select id="countCombineBySearch" resultType="Integer">
+        SELECT count(0)
+        FROM order_composite w
+        LEFT JOIN orders o ON w.saling_son_id = o.order_id
+        LEFT JOIN client c ON o.client_id = c.client_id
+        WHERE
+        <if test="status!='所有状态'">
+            w.status = #{status} AND
+        </if>
+        (w.saling_mord_id like CONCAT('%', #{value} ,'%')
+        or w.batch_id like CONCAT('%', #{value} ,'%')
+        or w.`status` like CONCAT('%', #{value} ,'%')
+        or w.saling_son_id like CONCAT('%', #{value} ,'%'))
+    </select>
+    <!--    WHERE w.purchase_status != '采购取消' and (w.purchase_status like CONCAT('%', #{value} ,'%') or g.sc_item_name like CONCAT('%', #{value} ,'%') or u.nickname like CONCAT('%', #{value} ,'%') or d.department_name like CONCAT('%', #{value} ,'%') or co.company_name like CONCAT('%', #{value} ,'%') or w.contacts_person like CONCAT('%', #{value} ,'%'))-->
+
+    <select id="listCombineBySearch2" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value}, '%')
+        ORDER BY w.id
+            DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <select id="listCombineBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+        w.id,
+        w.batch_id,
+        w.saling_mord_id,
+        w.saling_son_id,
+        w.product_son_id,
+        w.`status`,
+        date_format(w.create_time, '%Y-%m-%d %T') create_time,
+        w.create_staff,
+        w.shuru_status,
+        date_format(w.shuru_time, '%Y-%m-%d %T') shuru_time,
+        w.shuru_staff,
+        w.jiaodui_status,
+        date_format(w.jiaodui_time, '%Y-%m-%d %T') jiaodui_time,
+        w.jiaodui_staff,
+        w.hecheng_status,
+        date_format(w.hecheng_time, '%Y-%m-%d %T') hecheng_time,
+        w.hecheng_staff,
+        w.anjie_status,
+        date_format(w.anjie_time, '%Y-%m-%d %T') anjie_time,
+        w.anjie_staff,
+        w.donggan_status,
+        date_format(w.donggan_time, '%Y-%m-%d %T') donggan_time,
+        w.donggan_staff,
+        w.chendian_status,
+        date_format(w.chendian_time, '%Y-%m-%d %T') chendian_time,
+        w.chendian_staff,
+        w.zajiao_status,
+        date_format(w.zajiao_time, '%Y-%m-%d %T') zajiao_time,
+        w.zajiao_staff,
+        w.hplc_status,
+        date_format(w.hplc_time, '%Y-%m-%d %T') hplc_time,
+        w.hplc_staff,
+        w.dingliang_status,
+        date_format(w.dingliang_time, '%Y-%m-%d %T') dingliang_time,
+        w.dingliang_staff,
+        w.zhijian_status,
+        date_format(w.zhijian_time, '%Y-%m-%d %T') zhijian_time,
+        w.zhijian_staff,
+        w.mark,
+
+        IF(w.saling_son_id, o.order_status, w.`status`) order_status,
+        o.mord_id mord_id,
+        c.client_name client_name,
+        DATE_FORMAT(o.create_time, '%Y.%m.%d %T') mord_create_time,
+        DATE_FORMAT(o.delivery_time, '%Y.%m.%d %T') delivery_time
+        FROM order_composite w
+        LEFT JOIN orders o ON w.saling_son_id = o.order_id
+        LEFT JOIN client c ON o.client_id = c.client_id
+        WHERE
+        <if test="status!='所有状态'">
+            w.`status` = #{status} AND
+        </if>
+        (w.saling_mord_id like CONCAT('%', #{value} ,'%')
+        or w.batch_id like CONCAT('%', #{value} ,'%')
+        or w.`status` like CONCAT('%', #{value} ,'%')
+        or w.saling_son_id like CONCAT('%', #{value} ,'%'))
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise> w.id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <!--    按列排序-->
+    <select id="listCombineBySort" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+        w.id,
+        w.batch_id,
+        w.saling_mord_id,
+        w.saling_son_id,
+        w.product_son_id,
+        w.`status`,
+        date_format(w.create_time, '%Y-%m-%d %T') create_time,
+        w.create_staff,
+        w.shuru_status,
+        date_format(w.shuru_time, '%Y-%m-%d %T') shuru_time,
+        w.shuru_staff,
+        w.jiaodui_status,
+        date_format(w.jiaodui_time, '%Y-%m-%d %T') jiaodui_time,
+        w.jiaodui_staff,
+        w.hecheng_status,
+        date_format(w.hecheng_time, '%Y-%m-%d %T') hecheng_time,
+        w.hecheng_staff,
+        w.anjie_status,
+        date_format(w.anjie_time, '%Y-%m-%d %T') anjie_time,
+        w.anjie_staff,
+        w.donggan_status,
+        date_format(w.donggan_time, '%Y-%m-%d %T') donggan_time,
+        w.donggan_staff,
+        w.chendian_status,
+        date_format(w.chendian_time, '%Y-%m-%d %T') chendian_time,
+        w.chendian_staff,
+        w.zajiao_status,
+        date_format(w.zajiao_time, '%Y-%m-%d %T') zajiao_time,
+        w.zajiao_staff,
+        w.hplc_status,
+        date_format(w.hplc_time, '%Y-%m-%d %T') hplc_time,
+        w.hplc_staff,
+        w.dingliang_status,
+        date_format(w.dingliang_time, '%Y-%m-%d %T') dingliang_time,
+        w.dingliang_staff,
+        w.zhijian_status,
+        date_format(w.zhijian_time, '%Y-%m-%d %T') zhijian_time,
+        w.zhijian_staff,
+        w.mark,
+
+        IF(w.saling_son_id, o.order_status, w.`status`) order_status,
+        o.mord_id mord_id,
+        c.client_name client_name,
+        DATE_FORMAT(o.create_time, '%Y.%m.%d %T') mord_create_time,
+        DATE_FORMAT(o.delivery_time, '%Y.%m.%d %T') delivery_time
+        FROM order_composite w
+        LEFT JOIN orders o ON w.saling_son_id = o.order_id
+        LEFT JOIN client c ON o.client_id = c.client_id
+        <if test="status!='所有状态' or value!=''">
+            WHERE
+            <if test="status!='所有状态'">
+                w.`status` = #{status}
+            </if>
+            <if test="status!='所有状态' and value!=''"> AND </if>
+            <if test="value!=''">
+                (w.saling_mord_id like CONCAT('%', #{value} ,'%')
+                or w.saling_son_id like CONCAT('%', #{value} ,'%'))
+            </if>
+        </if>
+        ORDER BY
+        <choose>
+            <when test="prop!=''">
+                ${prop}
+            </when>
+            <otherwise> w.id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="countCombineBySort" resultType="Integer">
+        SELECT count(0)
+        FROM order_composite w
+        LEFT JOIN orders o ON w.saling_son_id = o.order_id
+        LEFT JOIN client c ON o.client_id = c.client_id
+        <if test="status!='所有状态' or value!=''">
+            WHERE
+            <if test="status!='所有状态'">
+                w.status = #{status}
+            </if>
+            <if test="status!='所有状态' and value!=''"> AND </if>
+            <if test="value!=''">
+                (w.saling_mord_id like CONCAT('%', #{value} ,'%')
+                or w.saling_son_id like CONCAT('%', #{value} ,'%'))
+            </if>
+        </if>
+    </select>
+    <!--    WHERE w.purchase_status != '采购取消' and (w.purchase_status like CONCAT('%', #{value} ,'%') or g.sc_item_name like CONCAT('%', #{value} ,'%') or u.nickname like CONCAT('%', #{value} ,'%') or d.department_name like CONCAT('%', #{value} ,'%') or co.company_name like CONCAT('%', #{value} ,'%') or w.contacts_person like CONCAT('%', #{value} ,'%'))-->
+
+    <select id="listCombineByContentHaveSearchAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value}, '%')
+        ORDER BY w.content
+            asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listCombineByContentHaveSearchDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value}, '%')
+        ORDER BY w.content
+            desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listCombineByOrderCreateTimeHaveSearchAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value}, '%')
+        ORDER BY w.create_time
+            asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listCombineByOrderCreateTimeHaveSearchDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value}, '%')
+        ORDER BY w.create_time
+            desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listCombineByOrderAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1'
+        ORDER BY w.content
+            asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listCombineByContentDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1'
+        ORDER BY w.content
+            desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listCombineByOrderCreateTimeAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1'
+        ORDER BY w.create_time
+            asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listCombineByOrderCreateTimeDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1'
+        ORDER BY w.create_time
+            desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <!-- 按状态搜索（待办事项）(author:bguan) -->
+    <select id="todoSearchByStatus" resultType="Integer">
+        SELECT count(0)
+        FROM order_composite w
+        WHERE w.status = #{status}
+    </select>
+    <select id="todoSearchEventByStatus" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM order_composite w
+        WHERE w.status = #{status}
+    </select>
+</mapper>

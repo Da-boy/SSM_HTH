@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.SettingDao">
+
+
+    <insert id="addGlobalConfig" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO setting_global_config
+            (global_user_id,global_size,global_color_theme,sale_print_favourite)
+        VALUES
+            (#{userId},#{global_size},#{global_color_theme},#{sale_print_favourite})
+    </insert>
+
+
+
+    <!--  自动催账设置和读取  -->
+    <select id="getAutoUrgeBill" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                    id,
+            w.urge_bill_on          urge_bill_on,
+            w.urge_bill_week        urge_bill_week,
+            w.urge_bill_method      urge_bill_method
+        FROM sys_setting w
+        ORDER BY w.id
+        ASC
+    </select>
+
+    <select id="countAutoUrgeBill" resultType="Integer">
+        SELECT count(0)
+        FROM sys_setting w
+    </select>
+
+    <insert id="setAutoUrgeBill" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO sys_setting
+            (urge_bill_on, urge_bill_week, urge_bill_method)
+        VALUES
+            (#{autoUrgeBill}, #{weekNum}, #{warningMethod})
+    </insert>
+
+    <update id="updateAutoUrgeBill" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE sys_setting
+        SET
+            urge_bill_on = #{autoUrgeBill},
+            urge_bill_week = #{weekNum},
+            urge_bill_method = #{warningMethod}
+        WHERE id = #{id}
+    </update>
+
+
+
+    <!--  打印方案设置和读取  -->
+    <select id="getPrintScheme" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.scheme_id                 scheme_id,
+            w.scheme_name               scheme_name,
+            w.staff_id                  staff_id,
+            w.master_print_item         master_print_item,
+            w.sub_print_item            sub_print_item,
+            w.show_barcode              show_barcode,
+            w.show_special_attention    show_special_attention
+        FROM setting_print_scheme w
+        WHERE staff_id = #{staff_id}
+            AND scheme_name = #{scheme_name}
+    </select>
+
+    <insert id="insertPrintScheme" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO setting_print_scheme
+            (scheme_name, staff_id, master_print_item, sub_print_item, show_barcode, show_special_attention)
+        VALUES
+            (#{scheme_name}, #{staff_id}, #{master_print_item}, #{sub_print_item}, #{show_barcode}, #{show_special_attention})
+    </insert>
+
+    <update id="setPrintScheme" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE setting_print_scheme
+        SET
+            scheme_name = #{scheme_name},
+            staff_id = #{staff_id},
+            master_print_item = #{master_print_item},
+            sub_print_item = #{sub_print_item},
+            show_barcode = #{show_barcode},
+            show_special_attention = #{show_special_attention}
+        WHERE staff_id = #{staff_id}
+            AND scheme_name = #{scheme_name}
+    </update>
+
+    <update id="updateThemeColorByUserId" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE setting_global_config s
+        SET
+            s.global_color_theme = #{color}
+        WHERE s.global_user_id = #{userId}
+    </update>
+    <insert id="addThemeColorByUserId" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO setting_global_config s
+            (global_user_id,global_size,global_color_theme)
+        VALUES
+            (#{userId},#{size},#{#6959CD})
+    </insert>
+
+    <select id="getThemeColorByUserId" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM setting_global_config s
+        WHERE s.global_user_id = #{userId}
+    </select>
+
+    <!--  各模块主页默认显示数据条数的设置  -->
+    <update id="updateDefPageNum" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE setting_default_page_num w
+        SET
+            ${mod_name} = #{page_num},
+            w.update_time = #{update_time}
+        WHERE w.global_user_id = #{user_id} AND w.is_deleted = 0
+    </update>
+
+    <select id="getDefPageNum" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM setting_default_page_num w
+        WHERE w.global_user_id = #{user_id}
+    </select>
+
+    <insert id="insertDefPageNum" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO setting_default_page_num
+            (global_user_id, is_deleted)
+        VALUES
+            (#{user_id}, 0)
+    </insert>
+
+
+
+    <!--  全局设置通用sql  -->
+    <select id="getGlobalConfig" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM setting_global_config s
+        WHERE s.global_user_id = #{user_id}
+    </select>
+
+    <insert id="insertGlobalConfig" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO setting_global_config s
+            (global_user_id,global_size,global_color_theme,sale_print_favourite)
+        VALUES
+            (#{user_id},#{global_size},#{#6959CD},#{sale_print_favourite})
+    </insert>
+
+    <update id="setGlobalConfig" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE setting_global_config s
+        SET
+            <if test="global_size">
+                s.global_size = #{global_size}
+            </if>
+            <if test="global_color_theme">
+                <if test="global_size">,</if>
+                s.global_color_theme = #{global_color_theme}
+            </if>
+            <if test="sale_print_favourite">
+                <if test="global_size || global_color_theme ">,</if>
+                s.sale_print_favourite = #{sale_print_favourite}
+            </if>
+        WHERE s.global_user_id = #{user_id}
+    </update>
+
+    <select id="getTableDisplayByUserId" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM setting_table_config s
+        WHERE s.staff_id = #{staff_id} and scheme_name = #{scheme_name}
+    </select>
+
+    <insert id="addTableDisplayByUserId" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO setting_table_config
+            (scheme_name,staff_id,table_show_item,mark)
+        VALUES
+            (#{scheme_name},#{staff_id},#{table_show_item},#{mark})
+    </insert>
+
+    <update id="setTableDisplayByUserId" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE setting_table_config
+        SET
+            table_show_item = #{table_show_item}
+        WHERE staff_id = #{staff_id} and scheme_name = #{scheme_name}
+    </update>
+</mapper>

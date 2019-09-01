@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.GoodsDao">
+
+
+    <insert id="addGoods" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO dim_sc_item
+            (sc_item_id,sc_item_name,sc_item_type,sc_item_desp,sc_item_attribute,is_gift,is_chemicals,is_drugs,is_explosive,is_packing,is_consumable,inspection_cycle,sc_item_price)
+        VALUES
+            (#{sc_item_id},#{sc_item_name},#{sc_item_type},#{sc_item_desp},#{sc_item_attribute},#{is_gift},#{is_chemicals},#{is_drugs},#{is_explosive},#{is_packing},#{is_consumable},#{inspection_cycle},#{sc_item_price})
+    </insert>
+
+    <select id="countGoods" resultType="Integer">
+        SELECT count(0)
+        FROM dim_sc_item w
+    </select>
+
+    <select id="listGoods" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.sc_item_id                                   sc_item_id,
+            w.sc_item_name                                 sc_item_name,
+            w.sc_item_type                                 sc_item_type,
+            w.sc_item_desp                                 sc_item_desp,
+            w.sc_item_attribute                            sc_item_attribute,
+            w.is_gift                                      is_gift,
+            w.is_chemicals                                 is_chemicals,
+            w.is_drugs                                     is_drugs,
+            w.is_explosive                                 is_explosive,
+            w.is_packing                                   is_packing,
+            w.is_consumable                                is_consumable,
+            w.inspection_cycle                             inspection_cycle,
+            w.sc_item_price                                sc_item_price
+        FROM dim_sc_item w
+        ORDER BY w.sc_item_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listGoodsBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.sc_item_id                                   sc_item_id,
+            w.sc_item_name                                 sc_item_name,
+            w.sc_item_type                                 sc_item_type,
+            w.sc_item_desp                                 sc_item_desp,
+            w.sc_item_attribute                            sc_item_attribute,
+            w.is_gift                                      is_gift,
+            w.is_chemicals                                 is_chemicals,
+            w.is_drugs                                     is_drugs,
+            w.is_explosive                                 is_explosive,
+            w.is_packing                                   is_packing,
+            w.is_consumable                                is_consumable,
+            w.inspection_cycle                             inspection_cycle,
+            w.sc_item_price                                sc_item_price
+        FROM dim_sc_item w
+        <if test="value!=''">WHERE
+            (w.sc_item_id like CONCAT('%', #{value} ,'%')
+            OR w.sc_item_name like CONCAT('%', #{value} ,'%')
+            OR w.sc_item_type like CONCAT('%', #{value} ,'%')
+            OR w.sc_item_desp like CONCAT('%', #{value} ,'%')
+            OR w.sc_item_attribute like CONCAT('%', #{value} ,'%')
+            OR w.sc_item_price like CONCAT('%', #{value} ,'%'))
+        </if>
+
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise> sc_item_name </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="countGoodsBySearch" resultType="Integer">
+         SELECT count(0)
+        FROM dim_sc_item w
+        <if test="value!=''">WHERE
+            (w.sc_item_id like CONCAT('%', #{value} ,'%')
+            OR w.sc_item_name like CONCAT('%', #{value} ,'%')
+            OR w.sc_item_type like CONCAT('%', #{value} ,'%')
+            OR w.sc_item_desp like CONCAT('%', #{value} ,'%')
+            OR w.sc_item_attribute like CONCAT('%', #{value} ,'%')
+            OR w.sc_item_price like CONCAT('%', #{value} ,'%'))
+        </if>
+    </select>
+
+    <update id="updateGoods" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE dim_sc_item
+        SET
+            sc_item_name = #{sc_item_name},
+            sc_item_type = #{sc_item_type},
+            sc_item_desp = #{sc_item_desp},
+            sc_item_attribute = #{sc_item_attribute},
+            is_gift = #{is_gift},
+            is_chemicals = #{is_chemicals},
+            is_drugs = #{is_drugs},
+            is_explosive = #{is_explosive},
+            is_packing = #{is_packing},
+            is_consumable = #{is_consumable},
+            inspection_cycle = #{inspection_cycle},
+            sc_item_price = #{sc_item_price}
+        WHERE sc_item_id = #{sc_item_id}
+    </update>
+
+    <!-- 根据货品ID删除货品信息 -->
+    <update id="deleteGoodsById" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE FROM dim_sc_item
+        WHERE sc_item_id = #{sc_item_id}
+    </update>
+</mapper>

@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.PurchaseDao">
+
+
+    <!--<select id="getAllPurchase" resultType="com.alibaba.fastjson.JSONObject">-->
+        <!--SELECT-->
+            <!--*-->
+        <!--FROM purchase_order-->
+    <!--</select>-->
+
+    <insert id="addPurchase" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO purchase_order
+            (purchase_mord_id, application_id, application_time, require_goods_time, purchase_status, supplier_id, application_staff_id, application_dept_id, purchase_son_order_id, goods_id, purchase_num, unit_price, sum_price, mark, storage_put_num_ought, storage_put_num, contacts_person)
+        VALUES
+            (#{purchase_mord_id}, #{application_id}, #{application_time}, #{require_goods_time}, #{purchase_status}, #{supplier_id}, #{application_staff_id}, #{application_dept_id}, #{purchase_son_order_id}, #{goods_id}, #{purchase_num}, #{unit_price}, #{sum_price}, #{mark}, #{storage_put_num_ought}, #{storage_put_num}, #{supplier_contact})
+    </insert>
+
+    <select id="countPurchase" resultType="Integer">
+        SELECT count(0)
+        FROM purchase_order w
+--         WHERE w.purchase_status != '采购取消'
+    </select>
+
+    <select id="listPurchase" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.purchase_mord_id                                      parentId,
+            w.purchase_son_order_id                                 purchaseId,
+            w.purchase_status                                       purchaseStatus,
+            w.supplier_id                                           supplierId,
+            w.goods_id                                              goodsId,
+            w.unit                                                  unit,
+            w.storage_put_num_ought                                 shouldPurchase,
+            w.storage_put_num                                       realPurchase,
+            w.unit_price                                            unitPrice,
+            w.sum_price                                             sumPrice,
+            date_format(w.application_time, '%Y-%m-%d %T')          applyTime,
+            date_format(w.require_goods_time, '%Y-%m-%d %T')        requireTime,
+            date_format(w.checked_time, '%Y-%m-%d %T')              checkedTime,
+            date_format(w.exwarehousing_time, '%Y-%m-%d %T')        outboundTime,
+            w.is_checked_passing                                    isCheckedPass,
+            w.checking_mark_info                                    checkedInfo,
+            w.application_staff_id                                  applyStaffId,
+            w.application_dept_id                                   applyDeptId,
+            w.major_staff_id                                        majorStaffId,
+            w.check_staff_id                                        checkedStaffId,
+            w.mark                                                  mark,
+            w.contacts_person                                       supplierContact,
+            w.application_id                                        applyId,
+            w.purchase_num                                          purchaseQuantity,
+            u.nickname                                              applyStaffName,
+            d.department_name                                       applyDeptName,
+            su.supplier_name                                        supplierName,
+            su.address                                              supplierAddress,
+            su.email                                                supplierEmail,
+            su.fax                                                  supplierFax,
+            su.contact                                              supplierContact2,
+            su.telephone                                            supplierPhone,
+            su.remark                                               supplierRemark,
+            g.sc_item_name                                          goodsName,
+            g.sc_item_price                                         goodsUnitPrice,
+            g.sc_item_type                                          goodsType
+        FROM purchase_order w
+        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+        LEFT JOIN department d ON d.department_id = w.application_dept_id
+        LEFT JOIN supplier su ON su.supplier_id = w.supplier_id
+        LEFT JOIN dim_sc_item g ON g.sc_item_id = w.goods_id
+        ORDER BY w.purchase_mord_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <!--  WHERE w.purchase_status != '采购取消'-->
+
+    <!--  更新采购订单（父订单）-->
+    <update id="updatePurchaseParent" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE purchase_order
+        SET
+            application_dept_id = #{department_id},
+            application_staff_id = #{staff_id},
+            supplier_id = #{company_id},
+            application_time = #{order_time_tmp},
+            application_id = #{apply_id},
+            contacts_person = #{supplier_contact},
+            require_goods_time = #{required_time_tmp}
+        WHERE purchase_mord_id = #{purchase_parent_id}
+    </update>
+    <!--  更新采购订单(子订单)-->
+    <update id="updatePurchase" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE purchase_order
+        SET
+            goods_id = #{product_id},
+            storage_put_num_ought = #{quantity},
+            storage_put_num = #{quantity},
+            unit = #{unit},
+            unit_price = #{unit_price},
+            sum_price = #{total_price},
+            mark = #{remark}
+        WHERE purchase_son_order_id = #{purchase_id}
+    </update>
+
+    <!-- 更新订单状态(对子订单操作) -->
+    <update id="deletePurchase" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE purchase_order
+        SET
+            purchase_status = #{purchaseStatus}
+        WHERE purchase_son_order_id = #{purchaseId}
+    </update>
+
+    <!-- 更新订单状态(对子订单操作) -->
+    <update id="changeOrderStatus" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE purchase_order
+        SET
+            purchase_status = #{purchaseStatus}
+        WHERE purchase_son_order_id = #{purchaseSubId}
+    </update>
+    <update id="changeOrderStatusMessage" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE purchase_order
+        SET
+            checking_mark_info = #{message}
+        WHERE purchase_son_order_id = #{purchaseSubId} and purchase_status = "待审核"
+    </update>
+
+    <!-- 采购订单入库 -->
+    <insert id="addWarehouseEntry" parameterType="com.alibaba.fastjson.JSONObject">
+    INSERT INTO warehouse_entry
+        (warehousing_mord_id, warehousing_son_order_id, warehousing_type, warehousing_status, purchasing_son_id, goods_id, unit, storage_put_num_ought,
+        storage_put_num, guarantee_period, create_time, application_staff_id, application_dept_id)
+    VALUES
+        (#{warehousingParentId}, #{warehousingSonId}, #{warehousingType}, #{warehousingStatus}, #{purchaseSonId}, #{goodsId}, #{unit}, #{storagePutNumOught},
+        #{storagePutNum}, #{guaranteePeriod}, #{createTime}, #{applicationStaffId}, #{applicationDeptId})
+    </insert>
+
+    <!-- 获取所有父订单下的所有子订单 -->
+    <select id="getPurchaseSonOrderByParentId" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.purchase_son_order_id                                 purchaseSonId,
+            w.goods_id                                              goodsId,
+            w.unit                                                  unit,
+            w.storage_put_num_ought                                 shouldPurchase,
+            w.storage_put_num                                       realPurchase
+        FROM purchase_order w
+        WHERE purchase_mord_id = #{purchaseId}
+    </select>
+
+
+
+    <select id="getPurchaseByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM purchase_order w
+        WHERE w.delete_status = '1' and w.content = #{content}
+    </select>
+
+
+    <select id="countPurchaseBySearch" resultType="Integer">
+        SELECT count(0)
+        FROM purchase_order w
+        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+        LEFT JOIN department d ON d.department_id = w.application_dept_id
+        LEFT JOIN company co ON co.company_id = w.supplier_id
+        LEFT JOIN dim_sc_item g ON g.sc_item_id = w.goods_id
+        WHERE
+            <if test="status!='所有状态'">
+                w.purchase_status = #{status} AND
+            </if>
+            <if test="dateSelection == 'applyTime'">
+                (w.application_time > #{start_time} AND #{end_time} > w.application_time) AND
+            </if>
+            <if test="dateSelection == 'requireTime'">
+                (w.require_goods_time > #{start_time} AND #{end_time} > w.require_goods_time) AND
+            </if>
+            (w.purchase_status like CONCAT('%', #{value} ,'%')
+            or g.sc_item_name like CONCAT('%', #{value} ,'%')
+            or u.nickname like CONCAT('%', #{value} ,'%')
+            or d.department_name like CONCAT('%', #{value} ,'%')
+            or co.company_name like CONCAT('%', #{value} ,'%')
+            or w.contacts_person like CONCAT('%', #{value} ,'%'))
+    </select>
+    <!--    WHERE w.purchase_status != '采购取消' and (w.purchase_status like CONCAT('%', #{value} ,'%') or g.sc_item_name like CONCAT('%', #{value} ,'%') or u.nickname like CONCAT('%', #{value} ,'%') or d.department_name like CONCAT('%', #{value} ,'%') or co.company_name like CONCAT('%', #{value} ,'%') or w.contacts_person like CONCAT('%', #{value} ,'%'))-->
+
+    <select id="listPurchaseBySearch2" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.id DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listPurchaseBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.purchase_mord_id                                      parentId,
+            w.purchase_son_order_id                                 purchaseId,
+            w.purchase_status                                       purchaseStatus,
+            w.supplier_id                                           supplierId,
+            w.goods_id                                              goodsId,
+            w.unit                                                  unit,
+            w.storage_put_num_ought                                 shouldPurchase,
+            w.storage_put_num                                       realPurchase,
+            w.unit_price                                            unitPrice,
+            w.sum_price                                             sumPrice,
+            date_format(w.application_time, '%Y-%m-%d %T')          applyTime,
+            date_format(w.require_goods_time, '%Y-%m-%d %T')        requireTime,
+            date_format(w.checked_time, '%Y-%m-%d %T')              checkedTime,
+            date_format(w.exwarehousing_time, '%Y-%m-%d %T')        outboundTime,
+            w.is_checked_passing                                    isCheckedPass,
+            w.checking_mark_info                                    checkedInfo,
+            w.application_staff_id                                  applyStaffId,
+            w.application_dept_id                                   applyDeptId,
+            w.major_staff_id                                        majorStaffId,
+            w.check_staff_id                                        checkedStaffId,
+            w.mark                                                  mark,
+            w.contacts_person                                       supplierContact,
+            w.application_id                                        applyId,
+            w.purchase_num                                          purchaseQuantity,
+            u.nickname                                              applyStaffName,
+            d.department_name                                       applyDeptName,
+            co.company_name                                         supplierName,
+            g.sc_item_name                                          goodsName
+        FROM purchase_order w
+        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+        LEFT JOIN department d ON d.department_id = w.application_dept_id
+        LEFT JOIN company co ON co.company_id = w.supplier_id
+        LEFT JOIN dim_sc_item g ON g.sc_item_id = w.goods_id
+        WHERE
+            <if test="status!='所有状态'">
+                w.purchase_status = #{status} AND
+            </if>
+            <if test="dateSelection == 'applyTime'">
+                (w.application_time > #{start_time} AND #{end_time} > w.application_time) AND
+            </if>
+            <if test="dateSelection == 'requireTime'">
+                (w.require_goods_time > #{start_time} AND #{end_time} > w.require_goods_time) AND
+            </if>
+            (w.purchase_status like CONCAT('%', #{value} ,'%')
+            or g.sc_item_name like CONCAT('%', #{value} ,'%')
+            or u.nickname like CONCAT('%', #{value} ,'%')
+            or d.department_name like CONCAT('%', #{value} ,'%')
+            or co.company_name like CONCAT('%', #{value} ,'%')
+            or w.contacts_person like CONCAT('%', #{value} ,'%'))
+        ORDER BY
+            <choose>
+                <when test="prop!=null and prop!=''">
+                    ${prop}
+                </when>
+                <otherwise> w.purchase_son_order_id </otherwise>
+            </choose>
+            <choose>
+                <when test="order=='ascending'">
+                    ASC
+                </when>
+                <otherwise> DESC </otherwise>
+            </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <!--    WHERE w.purchase_status != '采购取消' and (w.purchase_status like CONCAT('%', #{value} ,'%') or g.sc_item_name like CONCAT('%', #{value} ,'%') or u.nickname like CONCAT('%', #{value} ,'%') or d.department_name like CONCAT('%', #{value} ,'%') or co.company_name like CONCAT('%', #{value} ,'%') or w.contacts_person like CONCAT('%', #{value} ,'%'))-->
+
+    <select id="listPurchaseByContentHaveSearchAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.content asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listPurchaseByContentHaveSearchDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.content desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listPurchaseByOrderCreateTimeHaveSearchAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.create_time asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listPurchaseByOrderCreateTimeHaveSearchDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1' and w.content like CONCAT('%', #{value} ,'%')
+        ORDER BY w.create_time desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listPurchaseByOrderAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1'
+        ORDER BY w.content asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listPurchaseByContentDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1'
+        ORDER BY w.content desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listPurchaseByOrderCreateTimeAsc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1'
+        ORDER BY w.create_time asc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="listPurchaseByOrderCreateTimeDesc" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.id                                      id,
+            w.content                                 content,
+            date_format(w.create_time, '%Y.%m.%d %T') createTime
+        FROM purchase_order w
+        WHERE w.delete_status = '1'
+        ORDER BY w.create_time desc
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <!-- 按状态搜索（待办事项）(author:bguan) -->
+    <select id="todoSearchByStatus" resultType="Integer">
+        SELECT count(0)
+        FROM purchase_order w
+        WHERE w.purchase_status = #{status}
+    </select>
+    <select id="todoSearchEventByStatus" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM purchase_order w
+        WHERE w.purchase_status = #{status}
+    </select>
+
+    <!--    供应商表相关-->
+    <!--   获取所有供应商信息 -->
+    <select id="countSupplier" resultType="Integer">
+        SELECT count(0)
+        FROM supplier w
+    </select>
+    <select id="listSupplier" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.supplier_id                                   company_id,
+            w.supplier_name                                 company_name,
+            w.telephone                                     telephone,
+            w.email                                         email,
+            w.fax                                           fax,
+            w.contact                                       contact,
+            w.remark                                        remark,
+            w.address                                       address
+        FROM supplier w
+        ORDER BY w.supplier_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+    <!-- 添加采购订单，现有的供应商列表中没有此供应商，在数据库中添加此供应商 -->
+    <insert id="addSupplier" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO supplier
+            (supplier_name, address, telephone, email, fax, contact, remark)
+        VALUES
+            (#{company_name}, #{address}, #{telephone}, #{email}, #{fax}, #{contact}, #{remark})
+    </insert>
+    <update id="updateSupplier" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE supplier
+        SET
+            supplier_name = #{company_name},
+            address = #{address},
+            telephone = #{telephone},
+            email = #{email},
+            fax = #{fax},
+            contact = #{contact},
+            remark = #{remark}
+        WHERE supplier_id = #{id}
+    </update>
+
+    <!--    按列排序-->
+    <select id="listPurchaseBySort" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.purchase_mord_id                                      parentId,
+            w.purchase_son_order_id                                 purchaseId,
+            w.purchase_status                                       purchaseStatus,
+            w.supplier_id                                           supplierId,
+            w.goods_id                                              goodsId,
+            w.unit                                                  unit,
+            w.storage_put_num_ought                                 shouldPurchase,
+            w.storage_put_num                                       realPurchase,
+            w.unit_price                                            unitPrice,
+            w.sum_price                                             sumPrice,
+            date_format(w.application_time, '%Y-%m-%d %T')          applyTime,
+            date_format(w.require_goods_time, '%Y-%m-%d %T')        requireTime,
+            date_format(w.checked_time, '%Y-%m-%d %T')              checkedTime,
+            date_format(w.exwarehousing_time, '%Y-%m-%d %T')        outboundTime,
+            w.is_checked_passing                                    isCheckedPass,
+            w.checking_mark_info                                    checkedInfo,
+            w.application_staff_id                                  applyStaffId,
+            w.application_dept_id                                   applyDeptId,
+            w.major_staff_id                                        majorStaffId,
+            w.check_staff_id                                        checkedStaffId,
+            w.mark                                                  mark,
+            w.contacts_person                                       supplierContact,
+            w.application_id                                        applyId,
+            w.purchase_num                                          purchaseQuantity,
+            u.nickname                                              applyStaffName,
+            d.department_name                                       applyDeptName,
+            co.company_name                                         supplierName,
+            g.sc_item_name                                          goodsName
+        FROM purchase_order w
+        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+        LEFT JOIN department d ON d.department_id = w.application_dept_id
+        LEFT JOIN company co ON co.company_id = w.supplier_id
+        LEFT JOIN dim_sc_item g ON g.sc_item_id = w.goods_id
+        <if test="status!='所有状态' or value!=''">
+            WHERE
+            <if test="status!='所有状态'">
+                w.purchase_status = #{status}
+            </if>
+            <if test="status!='所有状态' and value!=''"> AND </if>
+            <if test="value!=''">
+            (
+
+                )
+
+                (w.purchase_status like CONCAT('%', #{value} ,'%')
+                or g.sc_item_name like CONCAT('%', #{value} ,'%')
+                or u.nickname like CONCAT('%', #{value} ,'%')
+                or d.department_name like CONCAT('%', #{value} ,'%')
+                or co.company_name like CONCAT('%', #{value} ,'%')
+                or w.contacts_person like CONCAT('%', #{value} ,'%'))
+            </if>
+        </if>
+        ORDER BY
+        <choose>
+            <when test="prop!=''">
+                ${prop}
+            </when>
+            <otherwise> w.purchase_son_order_id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <select id="countPurchaseBySort" resultType="Integer">
+        SELECT count(0)
+            FROM purchase_order w
+            LEFT JOIN sys_user u ON u.id = w.application_staff_id
+            LEFT JOIN department d ON d.department_id = w.application_dept_id
+            LEFT JOIN company co ON co.company_id = w.supplier_id
+            LEFT JOIN dim_sc_item g ON g.sc_item_id = w.goods_id
+        <if test="status!='所有状态' or value!=''">
+            WHERE
+                <if test="status!='所有状态'">
+                    w.purchase_status = #{status}
+                </if>
+                <if test="status!='所有状态' and value!=''"> AND </if>
+                <if test="value!=''">
+                    (w.purchase_status like CONCAT('%', #{value} ,'%')
+                    or g.sc_item_name like CONCAT('%', #{value} ,'%')
+                    or u.nickname like CONCAT('%', #{value} ,'%')
+                    or d.department_name like CONCAT('%', #{value} ,'%')
+                    or co.company_name like CONCAT('%', #{value} ,'%')
+                    or w.contacts_person like CONCAT('%', #{value} ,'%'))
+                </if>
+        </if>
+    </select>
+</mapper>

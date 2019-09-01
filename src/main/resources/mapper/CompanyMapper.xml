@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.CompanyDao">
+
+    <insert id="addCompany" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO company
+            (company_name, company_desc, address, telephone, email, fax, register_id, social_credit_code, taxpayer_identification_number, organizational_code)
+        VALUES
+            (#{company_name}, #{company_desc}, #{address}, #{telephone}, #{email}, #{fax}, #{register_id}, #{social_credit_code}, #{taxpayer_identification_number}, #{organizational_code} )
+    </insert>
+
+    <select id="countCompany" resultType="Integer">
+        SELECT count(0)
+        FROM company w
+    </select>
+
+    <select id="getCompanyByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.company_name = #{company_name}
+    </select>
+    <select id="getTelephoneByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.telephone = #{telephone}
+    </select>
+    <select id="getAddressByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.address = #{address}
+    </select>
+    <select id="getRegisterIdByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.register_id = #{register_id}
+    </select>
+    <select id="getTaxpayerByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.taxpayer_identification_number = #{taxpayer_identification_number}
+    </select>
+    <select id="getOrganizationalByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.organizational_code = #{organizational_code}
+    </select>
+    <select id="getSocialByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.social_credit_code = #{social_credit_code}
+    </select>
+    <select id="getMailByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.email = #{email}
+    </select>
+    <select id="getFaxByContent" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM company w
+        WHERE w.fax = #{fax}
+    </select>
+
+    <select id="countCompanyBySearch" resultType="Integer">
+        SELECT count(0)
+        FROM company w
+        <if test="value != ''">
+            WHERE w.company_name like CONCAT('%', #{value} ,'%') or w.company_desc like CONCAT('%', #{value} ,'%') or w.address like CONCAT('%', #{value} ,'%') or w.telephone like CONCAT('%', #{value} ,'%')
+        </if>
+    </select>
+
+    <select id="listCompany" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.company_id                                    company_id,
+            w.company_name                                  company_name,
+            w.company_desc                                  company_desc,
+            w.telephone                                     telephone,
+            w.email                                         email,
+            w.fax                                           fax,
+            w.register_id                                   register_id,
+            w.social_credit_code                            social_credit_code,
+            w.taxpayer_identification_number                taxpayer_identification_number,
+            w.organizational_code                           organizational_code,
+            w.address                                       address
+        FROM company w
+        ORDER BY w.company_id
+        DESC
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+<!--搜索+排序-->
+    <select id="listCompanyBySearch" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            w.company_id                                    company_id,
+            w.company_name                                  company_name,
+            w.company_desc                                  company_desc,
+            w.telephone                                     telephone,
+            w.email                                         email,
+            w.fax                                           fax,
+            w.register_id                                   register_id,
+            w.social_credit_code                            social_credit_code,
+            w.taxpayer_identification_number                taxpayer_identification_number,
+            w.organizational_code                           organizational_code,
+            w.address                                       address
+        FROM company w
+        <if test="value != ''">
+            WHERE w.company_name like CONCAT('%', #{value} ,'%') or w.company_desc like CONCAT('%', #{value} ,'%') or w.address like CONCAT('%', #{value} ,'%') or w.telephone like CONCAT('%', #{value} ,'%')
+        </if>
+        ORDER BY
+        <choose>
+            <when test="prop!=null and prop!=''">
+                ${prop}
+            </when>
+            <otherwise> company_id </otherwise>
+        </choose>
+        <choose>
+            <when test="order=='ascending'">
+                ASC
+            </when>
+            <otherwise> DESC </otherwise>
+        </choose>
+        LIMIT #{offSet}, #{pageRow}
+    </select>
+
+    <update id="updateCompany" parameterType="com.alibaba.fastjson.JSONObject">
+        UPDATE company
+        SET
+            company_name = #{company_name},
+            company_desc = #{company_desc},
+            address = #{address},
+            telephone = #{telephone},
+            email = #{email},
+            fax = #{fax},
+            register_id = #{register_id},
+            social_credit_code = #{social_credit_code},
+            taxpayer_identification_number = #{taxpayer_identification_number},
+            organizational_code = #{organizational_code}
+        WHERE company_id = #{id}
+    </update>
+
+    <delete id="deleteCompany" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE FROM company
+        WHERE company_id = #{company_id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.tempDepartmentDao">
+
+
+    <select id="getPersonsByDeptId" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            ud.staff_id , u.nickname
+        FROM user_department ud , sys_user u
+        where ud.staff_id = u.id and department_id = #{deptId}
+
+    </select>
+
+    <select id="getDeptByUserId" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            department_id
+        FROM user_department ud
+        where staff_id = #{userId}
+
+    </select>
+
+    <select id="getJLDeptById" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            dept.*,u.nickname
+
+        FROM department dept
+            , sys_user u
+        WHERE
+         dept.staff_id = u.id
+         and dept.department_id = #{deptId}
+    </select>
+
+    <select id="countUser" resultType="Integer">
+        SELECT count(0)
+        FROM sys_user u
+        WHERE u.delete_status = '1'
+    </select>
+
+    <resultMap id="userMap" type="com.heeexy.example.util.model.One2Many">
+        <id column="userId" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="nickname" property="nickname"/>
+        <result column="roleId" property="roleId"/>
+        <result column="roleName" property="roleName"/>
+        <result column="createTime" property="createTime"/>
+        <result column="updateTime" property="updateTime"/>
+        <result column="lastLoginTime" property="lastLoginTime"/>
+        <result column="deleteStatus" property="deleteStatus"/>
+        <result column="staffNameEn" property="staffNameEn"/>
+        <result column="entryTime" property="entryTime"/>
+        <result column="leaveTime" property="leaveTime"/>
+        <result column="certificateId" property="certificateId"/>
+        <result column="certificateNumber" property="certificateNumber"/>
+        <result column="gender" property="gender"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="degreeId" property="degreeId"/>
+        <result column="contactStartDate" property="contactStartDate"/>
+        <result column="probationEndDate" property="probationEndDate"/>
+        <result column="contactEndDate" property="contactEndDate"/>
+        <result column="emergencyPeople" property="emergencyPeople"/>
+        <result column="emergencyPhone" property="emergencyPhone"/>
+        <result column="age" property="age"/>
+        <result column="nationality" property="nationality"/>
+        <result column="nation" property="nation"/>
+        <result column="native" property="native"/>
+        <result column="marital_status" property="marital_status"/>
+        <result column="graduated_from" property="graduated_from"/>
+        <result column="major" property="major"/>
+        <result column="is_quit" property="is_quit"/>
+        <result column="create_staff_id" property="create_staff_id"/>
+        <result column="update_staff_id" property="update_staff_id"/>
+        <result column="staff_state" property="staff_state"/>
+        <result column="certificateType" property="certificateType"/>
+        <result column="positionName" property="positionName"/>
+        <result column="departmentName" property="departmentName"/>
+        <result column="degreeName" property="degreeName"/>
+        <collection property="permissionList" ofType="String">
+            <id column="permissionName" property="permissionName"/>
+            <!--<result column="permission_code" property="permission_code" />-->
+        </collection>
+    </resultMap>
+    <select id="listUser" resultMap="userMap">
+        SELECT
+            u.*,
+            r.role_name                            roleName,
+            CONCAT(p.menu_name, p.permission_name) permissionName,
+            cert.certificate_type certificateType,
+            posi.position_name positionName,
+            depa.department_name departmentName,
+            degr.degree_name degreeName
+        FROM (
+                 SELECT
+
+                     id                                      userId,
+                     username                                username,
+                     nickname                                nickname,
+                     role_id                                 roleId,
+                     delete_status                           deleteStatus,
+                     DATE_FORMAT(create_time, '%Y.%m.%d %T') createTime,
+                     DATE_FORMAT(update_time, '%Y.%m.%d %T') updateTime,
+                     staff_name_en                           staffNameEn,
+                     entry_time   entryTime,
+                     leave_time   leaveTime,
+                     certificate_id   certificateId,
+                     certificate_number   certificateNumber,
+                     gender   gender,
+                     phone,
+                     email,birthday,
+                     degree_id   degreeId,
+                     contact_start_date   contactStartDate,
+                     probation_end_date   probationEndDate,
+                     contact_end_date   contactEndDate,
+                     emergency_people   emergencyPeople,
+                     emergency_phone    emergencyPhone,
+                     age,nationality,nation,native,marital_status,graduated_from,major,is_quit,create_staff_id,update_staff_id,staff_state
+                 FROM sys_user
+                 WHERE delete_status = '1'
+                 ORDER BY id
+                 LIMIT #{offSet}, #{pageRow}
+             ) u
+            LEFT JOIN sys_role r ON r.id = u.roleId
+            LEFT JOIN sys_role_permission rp ON rp.role_id = r.id
+            LEFT JOIN sys_permission p ON p.id = rp.permission_id
+            LEFT JOIN certificate cert ON cert.certificate_id = u.certificateId
+            LEFT JOIN personnel pers ON pers.staff_id = u.userId
+            LEFT JOIN department depa ON depa.department_id = pers.department_id
+            LEFT JOIN position posi ON posi.position_id = pers.position_id
+            LEFT JOIN degree degr ON degr.degree_id = u.degreeId
+
+        ORDER BY u.userId
+    </select>
+    <!--<select id="listUser" resultType="com.alibaba.fastjson.JSONObject">-->
+        <!--SELECT-->
+            <!--*-->
+        <!--FROM sys_user u ,certificate c ,degree d-->
+        <!--where u.certificate_id = c.certificate_id and u.degree_id = d.degree_id-->
+        <!--ORDER BY u.id-->
+        <!--ASC-->
+        <!--LIMIT #{offSet}, #{pageRow}-->
+    <!--</select>-->
+
+    <select id="getAllDepartments" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            *
+        FROM department
+    </select>
+
+    <insert id="addUser" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO sys_user
+        (username, password, nickname, role_id ,degree_id,gender,nation,major,native,graduated_from,staff_name_en,email,emergency_people,nationality,certificate_number,phone,emergency_phone) VALUES
+            (#{username}, #{password}, #{nickname}, #{roleId} ,#{degreeId},#{gender},#{nation},#{major},#{native}, #{graduated_from},#{staffNameEn},#{email},#{emergencyPeople},#{nationality},#{certificateNumber},#{phone},#{emergencyPhone})
+    </insert>
+
+    <update id="updateUser">
+        UPDATE sys_user
+        SET
+        nickname = #{nickname}
+        <if test="password != '' and password !=null">
+            , password = #{password}
+        </if>
+
+        , role_id = #{roleId}
+        , delete_status = #{deleteStatus}
+        , degree_id = #{degreeId}
+        , gender = #{gender}
+        , nation = #{nation}
+        , certificate_id = #{certificateId}
+        , update_staff_id = #{update_staff_id}
+        , create_staff_id = #{create_staff_id}
+        , major = #{major}
+        , graduated_from = #{graduated_from}
+        , staff_name_en = #{staffNameEn}
+        , emergency_people = #{emergencyPeople}
+        , is_quit = #{is_quit}
+        , marital_status = #{marital_status}
+        , nationality = #{nationality}
+        , certificate_number = #{certificateNumber}
+        , phone = #{phone}
+        , emergency_phone = #{emergencyPhone}
+        <if test="staff_state == '正式员工'">
+            , staff_state = 2
+        </if>
+        <if test="staff_state == '实习员工'">
+            , staff_state = 1
+        </if>
+        <if test="staff_state == '离职员工'">
+            , staff_state = 3
+        </if>
+
+        WHERE id = #{userId} and id != 10001
+    </update>
+
+    <resultMap id="roleMap" type="com.heeexy.example.util.model.One2Many">
+        <id column="roleId" property="roleId"/>
+        <result column="roleName" property="roleName"/>
+        <collection property="users" ofType="com.alibaba.fastjson.JSONObject">
+            <id column="userId" property="userId"/>
+            <result column="nickname" property="nickname"/>
+        </collection>
+        <collection property="menus" ofType="com.heeexy.example.util.model.One2Many">
+            <id column="menuCode" property="menuCode"/>
+            <result column="menuName" property="menuName"/>
+            <collection property="permissions" ofType="com.alibaba.fastjson.JSONObject">
+                <id column="permissionId" property="permissionId"/>
+                <result column="permissionName" property="permissionName"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="listRole" resultMap="roleMap">
+        SELECT
+            r.id              roleId,
+            r.role_name       roleName,
+            u.id              userId,
+            u.nickname        nickname,
+            p.id              permissionId,
+            p.menu_code       menuCode,
+            p.menu_name       menuName,
+            p.permission_name permissionName
+        FROM sys_role r
+            LEFT JOIN sys_user u ON r.id = u.role_id AND u.delete_status = '1'
+            LEFT JOIN sys_role_permission rp ON r.id = rp.role_id AND rp.delete_status = '1'
+            LEFT JOIN sys_permission p ON rp.permission_id = p.id
+        WHERE r.delete_status = '1'
+        ORDER BY r.id, p.id
+    </select>
+    <resultMap id="permissionMap" type="com.heeexy.example.util.model.One2Many">
+        <id column="menuName" property="menuName"/>
+        <collection property="permissions" ofType="com.alibaba.fastjson.JSONObject">
+            <id column="id" property="id"/>
+            <result column="permissionName" property="permissionName"/>
+            <result column="requiredPerm" property="requiredPerm" javaType="Integer"/>
+        </collection>
+    </resultMap>
+    <select id="listAllPermission" resultMap="permissionMap">
+        SELECT
+            p.id                  id,
+            p.menu_name           menuName,
+            p.permission_name     permissionName,
+            p.required_permission requiredPerm
+        FROM sys_permission p;
+    </select>
+
+    <insert id="insertRole" useGeneratedKeys="true" keyProperty="roleId">
+        INSERT INTO sys_role
+        (role_name)
+        VALUES (#{roleName})
+    </insert>
+
+    <insert id="insertRolePermission">
+        insert into sys_role_permission (role_id, permission_id)
+        values
+        <foreach collection="permissions" item="item" index="index" separator=",">
+            (#{roleId}, #{item})
+        </foreach>
+    </insert>
+
+    <resultMap id="aRole" type="com.heeexy.example.util.model.One2Many">
+        <id column="roleId" property="roleId"/>
+        <result column="roleName" property="roleName"/>
+        <collection property="users" ofType="com.alibaba.fastjson.JSONObject">
+            <id column="userId" property="userId"/>
+        </collection>
+        <collection property="permissionIds" ofType="Integer">
+            <id column="permissionId" property="permissionId"/>
+        </collection>
+    </resultMap>
+    <select id="getRoleAllInfo" resultMap="aRole">
+        SELECT
+            r.id        roleId,
+            r.role_name roleName,
+            u.id        userId,
+            p.id        permissionId
+        FROM sys_role r
+            LEFT JOIN sys_user u ON r.id = u.role_id AND u.delete_status = '1'
+            LEFT JOIN sys_role_permission rp ON r.id = rp.role_id AND rp.delete_status = '1'
+            LEFT JOIN sys_permission p ON rp.permission_id = p.id
+        WHERE r.id = #{roleId}
+    </select>
+
+    <update id="removeRole">
+        UPDATE sys_role
+        SET
+            delete_status = '2'
+        WHERE id = #{roleId} and id !=1
+    </update>
+    <update id="removeRoleAllPermission">
+        UPDATE sys_role_permission
+        SET
+            delete_status = '2'
+        WHERE role_id = #{roleId}
+    </update>
+
+    <update id="removeOldPermission">
+        UPDATE sys_role_permission
+        SET
+        delete_status = '2'
+        WHERE role_id = #{roleId}
+        AND permission_id in (
+        <foreach collection="permissions" item="item" index="index" separator=",">
+            #{item}
+        </foreach>
+        )
+    </update>
+    <update id="updateRoleName">
+        UPDATE sys_role
+        SET
+            role_name = #{roleName}
+        WHERE id = #{roleId}
+    </update>
+    <select id="queryExistUsername" resultType="int">
+        select count(0)
+         from sys_user
+         WHERE username=#{username}
+         AND delete_status='1';
+    </select>
+</mapper>

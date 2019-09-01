@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.WarehouseOutDao">
+
+	<select id="countWarehouseOut" resultType="Integer">
+		SELECT count(0)
+		FROM warehouse_out w
+	</select>
+
+
+	<select id="listWarehouseOut"
+		resultType="com.alibaba.fastjson.JSONObject">
+		select w.exwarehouse_mord_id exId,
+        w.exwarehouse_type,
+        w.product_order_id,
+        w.saling_mord_id,
+        w.saling_son_order_id son_order,
+        w.unit,
+		w.storage_put_num,
+        w.storage_put_num_ought,
+		w.exwarehouse_son_order_id ,
+		w.exwarehouse_status,
+		c.client_name,
+		c.client_phone,
+		d.sc_item_name as product_name,
+		o.gene_name,
+		o.client_id client_id,
+        u.username,
+        dep.department_name
+		FROM (warehouse_out w LEFT JOIN orders o
+		on w.saling_mord_id=o.mord_id AND w.saling_son_order_id = o.order_id)
+		LEFT JOIN dim_sc_item d on goods_id=d.sc_item_id
+		LEFT JOIN `client` c
+		ON o.client_id = c.client_id
+        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+        LEFT JOIN department dep ON dep.department_id = w.application_dept_id
+		ORDER BY exwarehouse_son_order_id
+		DESC
+		LIMIT #{offSet}, #{pageRow}
+	</select>
+
+	<update id="updateWarehouseOutAudit"
+		parameterType="com.alibaba.fastjson.JSONObject">
+		UPDATE warehouse_out
+		SET
+		exwarehouse_status = #{status},
+		checked_mark_info = #{reason}
+		WHERE exwarehouse_son_order_id = #{exwarehouse_son_order_id}
+	</update>
+	
+	<update id="updateWarehouseOutAuditBatch"
+		parameterType="com.alibaba.fastjson.JSONObject">
+		UPDATE warehouse_out
+		SET
+		exwarehouse_status = #{status},
+		checked_mark_info = #{reason}
+		WHERE exwarehouse_status = '待出库'
+		AND exwarehouse_son_order_id in 
+     <foreach item="item" index="index" collection="exIds" open="(" separator="," close=")">  
+      #{item}  
+     </foreach>  
+	</update>
+
+	<select id="listWarehouseOutBySearch"
+		resultType="com.alibaba.fastjson.JSONObject">
+			select w.exwarehouse_mord_id exId,
+	        w.exwarehouse_type,
+	        w.product_order_id,
+	        w.saling_mord_id,
+	        w.saling_son_order_id son_order,
+	        w.unit,
+			w.storage_put_num,
+	        w.storage_put_num_ought,
+			w.exwarehouse_son_order_id ,
+			w.exwarehouse_status,
+			c.client_name,
+			c.client_phone,
+			d.sc_item_name as product_name,
+			o.gene_name,
+			o.client_id client_id,
+	        u.username,
+	        dep.department_name
+			FROM (warehouse_out w LEFT JOIN orders o
+			on w.saling_mord_id=o.mord_id AND w.saling_son_order_id = o.order_id)
+			LEFT JOIN dim_sc_item d on goods_id=d.sc_item_id
+			LEFT JOIN `client` c
+			ON o.client_id = c.client_id
+	        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+	        LEFT JOIN department dep ON dep.department_id = w.application_dept_id
+			<if test="status!='所有状态' or value!=''">
+			WHERE 
+			<if test="status!='所有状态'">
+				exwarehouse_status = #{status} 
+			</if>
+			<if test="status!='所有状态' and value!=''"> AND </if>
+			<if test="value!=''">
+			(w.exwarehouse_son_order_id like CONCAT('%', #{value} ,'%')
+			OR w.exwarehouse_type like CONCAT('%', #{value} ,'%')
+			OR w.product_order_id like CONCAT('%', #{value} ,'%')
+			OR w.saling_mord_id like CONCAT('%', #{value} ,'%')
+			OR	w.saling_son_order_id like CONCAT('%', #{value} ,'%')
+			OR	w.unit like CONCAT('%', #{value} ,'%')
+			OR	w.storage_put_num like CONCAT('%', #{value} ,'%')
+			OR	w.storage_put_num_ought like CONCAT('%', #{value} ,'%')
+			OR	u.username like CONCAT('%', #{value} ,'%')
+			OR	dep.department_name like CONCAT('%', #{value} ,'%')
+			OR	w.exwarehouse_status like CONCAT('%', #{value} ,'%'))
+			</if>
+			</if>
+			ORDER BY 
+			<choose>
+			<when test="prop!=null and prop!=''">
+				${prop} 
+			</when>
+			<otherwise> exwarehouse_son_order_id </otherwise>
+			</choose>
+			<choose>
+			<when test="order=='ascending'">
+				 ASC  
+			</when>
+			<otherwise> DESC </otherwise>
+			</choose>  
+			LIMIT #{offSet}, #{pageRow}
+	</select>
+
+	<select id="countWarehouseOutBySearch" resultType="Integer">
+		select count(0)
+		FROM (warehouse_out w LEFT JOIN orders o
+			on w.saling_mord_id=o.mord_id AND w.saling_son_order_id = o.order_id)
+			LEFT JOIN dim_sc_item d on goods_id=d.sc_item_id
+			LEFT JOIN `client` c
+			ON o.client_id = c.client_id
+	        LEFT JOIN sys_user u ON u.id = w.application_staff_id
+	        LEFT JOIN department dep ON dep.department_id = w.application_dept_id
+			<if test="status!='所有状态' or value!=''">
+			WHERE 
+			<if test="status!='所有状态'">
+				exwarehouse_status = #{status} 
+			</if>
+			<if test="status!='所有状态' and value!=''"> AND </if>
+			<if test="value!=''">
+			(w.exwarehouse_son_order_id like CONCAT('%', #{value} ,'%')
+			OR w.exwarehouse_type like CONCAT('%', #{value} ,'%')
+			OR w.product_order_id like CONCAT('%', #{value} ,'%')
+			OR w.saling_mord_id like CONCAT('%', #{value} ,'%')
+			OR	w.saling_son_order_id like CONCAT('%', #{value} ,'%')
+			OR	w.unit like CONCAT('%', #{value} ,'%')
+			OR	w.storage_put_num like CONCAT('%', #{value} ,'%')
+			OR	w.storage_put_num_ought like CONCAT('%', #{value} ,'%')
+			OR	u.username like CONCAT('%', #{value} ,'%')
+			OR	dep.department_name like CONCAT('%', #{value} ,'%')
+			OR	w.exwarehouse_status like CONCAT('%', #{value} ,'%'))
+			</if>
+			</if>
+	</select>
+
+
+	<select id="selectLatestInventory"
+		resultType="com.alibaba.fastjson.JSONObject">
+		select * FROM inventory
+		WHERE sc_item_id = #{itemId}
+		ORDER BY inventory_date DESC
+		limit 1
+	</select>
+
+
+	<insert id="insertInventory"
+		parameterType="com.alibaba.fastjson.JSONObject">
+		INSERT INTO inventory
+		(sc_item_id,warehouse_id,inventory_date,begin_stock_good,begin_stock_bad,end_stock_good,end_stock_bad,transportation_inventory,outgoing_vol,warehousing_vol)
+		VALUES
+		(#{sc_item_id},#{warehouse_id},#{inventory_date},#{begin_stock_good},#{begin_stock_bad},#{end_stock_good},#{end_stock_bad},#{transportation_inventory},#{outgoing_vol},#{warehousing_vol})
+	</insert>
+
+	<select id="findWarehouseOutById"
+		resultType="com.alibaba.fastjson.JSONObject">
+		select *
+		FROM warehouse_out
+		WHERE exwarehouse_son_order_id = #{exwarehouse_son_order_id}
+	</select>
+
+
+	<update id="updateInventoryWhout"
+		parameterType="com.alibaba.fastjson.JSONObject">
+		UPDATE inventory
+		SET
+		end_stock_good = #{end_stock_good},
+		outgoing_vol = #{outgoing_vol}
+		WHERE inventory = #{inventory}
+	</update>
+
+	<update id="updateWarehouseOutStatus"
+		parameterType="com.alibaba.fastjson.JSONObject">
+		UPDATE warehouse_out
+		SET
+		exwarehouse_status = #{status}
+		WHERE exwarehouse_son_order_id = #{exwarehouse_son_order_id}
+	</update>
+
+	<!-- 按状态搜索（待办事项）(author:bguan) -->
+	<select id="todoSearchByStatus" resultType="Integer">
+        SELECT count(0)
+        FROM warehouse_out w
+        WHERE w.exwarehouse_status = #{status}
+    </select>
+	<select id="todoSearchEventByStatus" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT *
+        FROM warehouse_out w
+        WHERE w.exwarehouse_status = #{status}
+    </select>
+
+</mapper>

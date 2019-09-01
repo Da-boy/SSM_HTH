@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heeexy.example.dao.CommitteeMemberRelationDao">
+
+    <insert id="addCommitteeMember" parameterType="com.alibaba.fastjson.JSONObject">
+        INSERT INTO committee_member
+            (member_id,committee_id)
+        VALUES
+            (#{committee_member_id},#{committee_id})
+    </insert>
+
+
+    <delete id="deleteCommitteeMember" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE FROM committee_member
+        WHERE member_id = #{committee_member_id}
+    </delete>
+
+    <delete id="deleteMemberFromCommittee" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE FROM committee_member
+        WHERE member_id = #{committee_member_id}
+        AND committee_id = #{committee_id}
+    </delete>
+
+    <delete id="deleteCommittee" parameterType="com.alibaba.fastjson.JSONObject">
+        DELETE FROM committee_member
+        WHERE committee_id = #{committee_id}
+    </delete>
+
+</mapper>
